@@ -94,7 +94,7 @@ def make_sbatch_file(file, star_evt, end_evt, sub_idx):
 
 def process_file(file):
     total_time = file[1] * CPU_PER_EVENT
-    number_jobs = math.ceil(float(total_time)/float(QUEUE_LIMIT))
+    number_jobs = int(math.ceil(float(total_time)/float(QUEUE_LIMIT)))
     events_per_job = file[1] / number_jobs
 
     global JOB_IDX
