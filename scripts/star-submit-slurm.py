@@ -59,9 +59,10 @@ def get_list_of_files(input_list):
 
     return file_list
 
-def get_time(star_evt, end_evt):
-    total = (end_evt-star_evt) * CPU_PER_EVENT
-    m, s = divmod(total, 60)
+def get_time(star_evt=0, end_evt=0, total_time=0):
+    if total_time == 0:
+        total_time = (end_evt-star_evt) * CPU_PER_EVENT
+    m, s = divmod(total_time, 60)
     h, m = divmod(m, 60)
 
     return "%i:%i:%i"%(h,m,s)
@@ -160,13 +161,40 @@ def process_file(file):
     number_jobs = int(math.ceil(float(total_time)/float(QUEUE_LIMIT)))
     events_per_job = file[1] / number_jobs
 
+    base_name = get_basename(file[0])
+    log_json = {}
+    log_json['file'] = '%s.daq'%base_name
+    log_json['number_events'] = '%i'%file[1]
+    log_json['number_jobs'] = '%i'%number_jobs
+    log_json['total_time'] = '%s'%get_time(total_time=total_time)
+    log_json['sub_files'] = []
+
+    if VERBOSE:
+        print "%s.daq -- %i job(s)"%(base_name, number_jobs)
+
     global JOB_IDX
     for jj in xrange(0,number_jobs):
         start_evt = 1 + jj * events_per_job
         end_evt = (jj+1) * events_per_job
         JOB_IDX += 1
-        print "%s_%i %i %i"%(SUBMISSION_ID,JOB_IDX,start_evt,end_evt)
-        make_sbatch_file(file[0], start_evt,end_evt, jj)
+        sub_file = '%s_%i:%i:%i'%(SUBMISSION_ID,JOB_IDX, start_evt, end_evt)
+
+        sbatch_filename = make_sbatch_file(file[0], start_evt,end_evt, jj)
+        if SUBMIT:
+            output = subprocess.Popen(['sbatch', sbatch_filename], stdout=subprocess.PIPE).communicate()[0]
+            jobid = [int(s) for s in output.split() if s.isdigit()]
+            sub_file += ':%i'%jobid[0]
+            if VERBOSE:
+                print "Submitted job: %i"%jobid[0]
+
+        log_json['sub_files'].append(sub_file)
+
+    runnumber = get_runnumber(base_name)
+    day = get_daynumber(runnumber)
+    log_dir = '%s/%s/%s'%(DAQ_SPLIT_LOG,day,runnumber)
+    subprocess.call(['mkdir','-p', log_dir])
+    with open('%s/%s.daqSplit.log'%(log_dir,base_name), 'w') as outfile:
+        json.dump(log_json, outfile)
 
 
 def main():
@@ -176,6 +204,12 @@ def main():
 
     if not check_submission_env():
         exit(1)
+
+
+    # create DAQ split log directory for this submission
+    global DAQ_SPLIT_LOG
+    os.mkdir('%s/%s'%(DAQ_SPLIT_LOG,SUBMISSION_ID))
+    DAQ_SPLIT_LOG += '/%s'%SUBMISSION_ID
 
     file_list = get_list_of_files(args.list)
     process_file(file_list[0])
