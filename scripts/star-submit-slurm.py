@@ -16,7 +16,9 @@ QUEUE_LIMIT = 10*60*60
 IMAGE = 'docker:mmustafa/sl64_sl16c:v1_pdsf'
 CHAIN = 'DbV20150316 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat CorrX OSpaceZ2 OGridLeak3D -hitfilt'
 OUTDIR = '/project/projectdirs/starprod/rnc/mustafa/cori_test/prod'
-SBATCH_DIR = 'sbatch'
+SBATCH_DIR = './sbatch'
+LOG_DIR = './log'
+ERR_DIR = './err'
 
 def get_args():
     parser = argparse.ArgumentParser(description="a script to create batch files for star data production using slurm")
@@ -79,6 +81,8 @@ def make_sbatch_file(file, star_evt, end_evt, sub_idx):
     sbatch_file.write('#SBATCH --image=%s'%IMAGE+'\n')
     sbatch_file.write('#SBATCH --nodes=1'+'\n')
     sbatch_file.write('#SBATCH --partition=regular'+'\n')
+    sbatch_file.write('#SBATCH --output=%s/%s_%i.log'%(LOG_DIR,SUBMISSION_ID,JOB_IDX)+'\n')
+    sbatch_file.write('#SBATCH --error=%s/%s_%i.err'%(ERR_DIR,SUBMISSION_ID,JOB_IDX)+'\n')
     sbatch_file.write('#SBATCH --time=%s'%get_time(star_evt,end_evt)+'\n')
     sbatch_file.write('\n')
     sbatch_file.write('module load shifter\n')
