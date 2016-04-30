@@ -84,7 +84,8 @@ def make_sbatch_file(file, star_evt, end_evt, sub_idx):
     sbatch_file.write('module load shifter\n')
     sbatch_file.write('cd $SCRATCH\n')
     sbatch_file.write('mkdir %s\n'%scratch_dir)
-    sbatch_file.write("srun -n 1 shifter /bin/csh -c \"source /usr/local/star/group/templates/cshrc; root4star -l -b -q"+
+    sbatch_file.write('cd  %s\n'%scratch_dir)
+    sbatch_file.write("srun -n 1 shifter /bin/csh -c \"source /usr/local/star/group/templates/cshrc; root4star -l -b -q "+
                       "'bfc.C(%i,%i,\\\"%s\\\",\\\"%s\\\")'\""%(star_evt,end_evt,CHAIN,file))
     sbatch_file.write('\n')
     sbatch_file.write('mkdir -p %s\n'%out_dir)
