@@ -12,10 +12,11 @@ import math
 SUBMISSION_ID = ''
 JOB_IDX = -1
 CPU_PER_EVENT = 50
-QUEUE_LIMIT = 10*60*60
+QUEUE_LIMIT = 11*60*60
 IMAGE = 'docker:mmustafa/sl64_sl16c:v1_pdsf'
 CHAIN = 'DbV20150316 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat CorrX OSpaceZ2 OGridLeak3D -hitfilt'
-OUTDIR = '/project/projectdirs/starprod/rnc/mustafa/cori_test/prod'
+
+OUT_DIR = '/project/projectdirs/starprod/rnc/mustafa/cori_test/prod'
 SBATCH_DIR = './sbatch'
 LOG_DIR = './log'
 ERR_DIR = './err'
@@ -68,12 +69,35 @@ def get_daynumber(runnumber):
                  
     return int((runnumber%1e6)/1e3)
 
+def check_submission_env():
+    
+    errors = 0
+
+    if not os.path.isdir(SBATCH_DIR):
+        print "ERROR: SBATCH DIR = %s doesn't exist!"%SBATCH_DIR
+        errors += 1
+
+    if not os.path.isdir(LOG_DIR):
+        print "ERROR: LOG DIR = %s doesn't exist!"%LOG_DIR
+        errors += 1
+
+    if not os.path.isdir(ERR_DIR):
+        print "ERROR: ERR DIR = %s doesn't exist!"%ERR_DIR
+        errors += 1
+
+    if not os.path.isdir(OUT_DIR):
+        print "ERROR: OUT DIR = %s doesn't exist!"%ERR_DIR
+        errors += 1
+        
+    return errors == 0
+
+
 def make_sbatch_file(file, star_evt, end_evt, sub_idx):
 
     base_name = get_basename(file)
     runnumber = get_runnumber(base_name)
     day = get_daynumber(runnumber)
-    out_dir = '%s/%i/%i/%i'%(OUTDIR,day,runnumber,sub_idx)
+    out_dir = '%s/%i/%i/%i'%(OUT_DIR,day,runnumber,sub_idx)
     scratch_dir = '%s_%i'%(SUBMISSION_ID,JOB_IDX)
 
     sbatch_file = open("%s/sched%s_%i.sbatch"%(SBATCH_DIR,SUBMISSION_ID,JOB_IDX),'w')
@@ -115,6 +139,9 @@ def main():
     global SUBMISSION_ID
     SUBMISSION_ID = binascii.hexlify(os.urandom(16))
     args = get_args()
+
+    if not check_submission_env():
+        exit(1)
 
     file_list = get_list_of_files(args.list)
     process_file(file_list[0])
