@@ -212,7 +212,8 @@ def main():
     DAQ_SPLIT_LOG += '/%s'%SUBMISSION_ID
 
     file_list = get_list_of_files(args.list)
-    process_file(file_list[0])
+    for f in file_list:
+        process_file(f)
 
 if __name__ == '__main__':
     main()
