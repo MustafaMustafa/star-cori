@@ -158,7 +158,7 @@ def make_sbatch_file(file, star_evt, end_evt, sub_idx):
     sbatch_file.write('\n')
     sbatch_file.write('mkdir -p %s\n'%out_dir)
     sbatch_file.write('cp -p %s.*.root %s\n'%(base_name,out_dir))
-    sbatch_file.write('cd ../')
+    sbatch_file.write('cd ../\n')
     sbatch_file.write('rm -r -f %s\n'%scratch_dir)
     sbatch_file.close()
 
