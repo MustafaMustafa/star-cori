@@ -32,8 +32,9 @@ def load_configuration(configuration_file):
 
 def get_args():
     parser = argparse.ArgumentParser(description="a script to create batch files for star data production using slurm")
-    parser.add_argument('-c','--configuration', help='configuration file', action = 'store', type=str)
-    parser.add_argument('-l', '--list', help='file containting list of files to process', action = 'store', type=str)
+    required = parser.add_argument_group('required arguments')
+    required.add_argument('-c','--configuration', help='configuration file', action = 'store', type=str)
+    required.add_argument('-l', '--list', help='file containing list of files to process', action = 'store', type=str)
     parser.add_argument('-v', '--verbose', help='increase output verbosity', action = 'store_true', default = False)
     parser.add_argument('-s', '--submit', help='submit jobs. Default is to create sbatch files only', action = 'store_true', default = False)
 
