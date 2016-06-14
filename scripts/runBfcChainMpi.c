@@ -8,12 +8,12 @@ void getBaseFileName(char* fileName, char* baseName);
 void getMuDstFileName(char* baseName, char* outFileName);
 void getOutFileName(char* baseName, char* outFileName, int starEvt, int endEvt);
 
-int const FileNameArraySize = 200;
+#define FileNameArraySize 200
 
 int main (int argc, char* argv[])
 {
-  char daqFileName[FileNameArraySize];
-  char chain[2000];
+  char daqFileName[FileNameArraySize] = "";
+  char chain[2000] = "";
   int firstEvent = 1;
   int lastEvent = 1;
 
@@ -45,8 +45,8 @@ int main (int argc, char* argv[])
     lastEventThisProcess = lastEvent;
   }
 
-  char baseName[FileNameArraySize];
-  char outFileName[FileNameArraySize];
+  char baseName[FileNameArraySize] = "";
+  char outFileName[FileNameArraySize] = "";
   getBaseFileName(daqFileName, baseName);
   getOutFileName(baseName, outFileName, firstEventThisProcess, lastEventThisProcess);
 
