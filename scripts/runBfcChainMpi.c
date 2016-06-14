@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
  
 void getBaseFileName(char* fileName, char* baseName);
 void getMuDstFileName(char* baseName, char* outFileName);
@@ -57,8 +58,15 @@ int main (int argc, char* argv[])
   printf("%-20s = %d\n", "End event", lastEventThisProcess);
   printf("%-20s = %s\n", "Out file name", outFileName);
 
+  // change directory for this process
+  char pDir[50] = "";
+  snprintf(pDir, sizeof(pDir), "process_%d", rank);
+  char command[3000] = "";
+  snprintf(command, sizeof(command), "mkdir %s", pDir);
+  system(command);
+  chdir(pDir);
+
   // run BFC chain
-  char command[3000];
   snprintf(command, sizeof(command), "root -l -b -q -x \'bfc.C(%d, %d, \"%s\", \"%s\", \"%s\")\'", firstEventThisProcess, lastEventThisProcess, chain, daqFileName, outFileName);
   system(command);
 
