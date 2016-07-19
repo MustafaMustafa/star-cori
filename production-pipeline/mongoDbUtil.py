@@ -21,26 +21,26 @@ class mongoDbUtil:
     def __init__(self, user = 'readOnly', dbName = 'STARProdState', dbServer='mongodb01.nersc.gov'):
 
         if user == 'admin':
-            self._user = 'STARProdState_admin'
-            self._password = 'w2e23sddf21'
+            self.__user = 'STARProdState_admin'
+            self.__password = 'w2e23sddf21'
         else:
-            self._user = 'STARProdState_ro'
-            self._password = 'w3s42dwq42'
+            self.__user = 'STARProdState_ro'
+            self.__password = 'w3s42dwq42'
 
-        self._dbName = dbName
-        self._dbServer = dbServer
+        self.__dbName = dbName
+        self.__dbServer = dbServer
 
-        self._connectDb()
+        self.__connectDb()
 
-    def _connectDb(self):
+    def __connectDb(self):
 
-        logging.info("Connecting to %s@%s. User: %s ..."%(self._dbServer, self._dbName, self._user))
+        logging.info("Connecting to %s@%s. User: %s ..."%(self.__dbServer, self.__dbName, self.__user))
         connectionTimeOutMax = 5
         try:
-            self._client = MongoClient('mongodb://{0}:{1}@{2}/{3}'.format(self._user, self._password, self._dbServer, self._dbName), 
+            self.__client = MongoClient('mongodb://{0}:{1}@{2}/{3}'.format(self.__user, self.__password, self.__dbServer, self.__dbName), 
                                         serverSelectionTimeoutMS = connectionTimeOutMax)
-            self._client.server_info() # attempt a connection
-            self.db = self._client[self._dbName]
+            self.__client.server_info() # attempt a connection
+            self.db = self.__client[self.__dbName]
 
         except pymongo.errors.ServerSelectionTimeoutError as err:
             logging.error("ERROR: Could not connect to DB server ...")
