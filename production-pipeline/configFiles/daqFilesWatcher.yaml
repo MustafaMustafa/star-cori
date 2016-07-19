@@ -1,3 +1,5 @@
 {
-daq_files_path: '/global/project/projectdirs/starprod/rnc/mustafa/daq/'
+daq_files_path: '/global/project/projectdirs/starprod/rnc/mustafa/daq/',
+heartbeat: 'True',
+heartbeat_interval: '5'
 }

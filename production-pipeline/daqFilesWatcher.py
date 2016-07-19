@@ -11,11 +11,17 @@ import argparse
 import sys
 import yaml
 import os
+import time
+import datetime
+from threading import Thread
 from mongoDbUtil import mongoDbUtil
 
 # global variables
 __verbose = False
 __daq_files_path = ''
+__beat_your_heart = True
+__heartbeat_interval = 15
+__files_stats = {}
 
 def main():
     logFormat = '%(asctime)-15s %(levelname)s: %(message)s'
@@ -25,6 +31,15 @@ def main():
     load_configuration(args.configuration)
 
     db = mongoDbUtil('admin').db
+    init()
+
+    heartbeatThread = Thread(target=heartbeat, args=(db['daqFilesWatcher'],))
+    heartbeatThread.setDaemon(True)
+    heartbeatThread.start()
+
+    # This is just to keep the main thread running
+    while True:
+        time.sleep(1e4)
 
 def get_args():
     parser = argparse.ArgumentParser(description="Daemon to watch for daq files at a specific path and populate the DB")
@@ -46,6 +61,7 @@ def get_args():
 
 def load_configuration(configuration_file):
 
+    # open configuration file
     if os.path.exists(configuration_file):
         logging.info("Loading configuration file ...")
     else:
@@ -56,6 +72,7 @@ def load_configuration(configuration_file):
     parameters = yaml.load(f)
     f.close()
 
+    # set daq files directory path
     __daq_files_path = parameters['daq_files_path']
 
     if os.path.isdir(__daq_files_path):
@@ -63,6 +80,34 @@ def load_configuration(configuration_file):
     else:
         logging.error("Path %s does not exist or is not a directory!"%__daq_files_path)
         exit(1)
+
+    # set heartbeat parameters
+    global __beat_your_heart
+    global __heartbeat_interval
+    if 'heartbeat' in parameters and parameters['heartbeat'] == 'True':
+        __beat_your_heart = True
+
+        if 'heartbeat_interval' in parameters:
+            __heartbeat_interval = int(parameters['heartbeat_interval'])
+
+        logging.info("Heartbeat interval set to %i seconds"%__heartbeat_interval)
+    else:
+        logging.info("Heart beat disabled in configuration file")
+        __beat_your_heart = False
+
+def init():
+    __files_stats['numberOfFilesOnDisk'] = 0
+    __files_stats['totalNumberOfFilesSeen'] = 0
+
+def heartbeat(hbColl):
+
+    while __beat_your_heart:
+        entry = {'numberOfFilesOnDisk': __files_stats['numberOfFilesOnDisk'],
+                 'totalNumberOfFilesSeen' : __files_stats['totalNumberOfFilesSeen'],
+                 'date' : datetime.datetime.utcnow()}
+        logging.info("Heartbeat")
+        hbColl.insert(entry)
+        time.sleep(__heartbeat_interval)
 
 if __name__ == '__main__':
     main()
