@@ -105,7 +105,6 @@ def heartbeat(hbColl):
         entry = {'numberOfFilesOnDisk': __files_stats['numberOfFilesOnDisk'],
                  'totalNumberOfFilesSeen' : __files_stats['totalNumberOfFilesSeen'],
                  'date' : datetime.datetime.utcnow()}
-        logging.info("Heartbeat")
         hbColl.insert(entry)
         time.sleep(__heartbeat_interval)
 
