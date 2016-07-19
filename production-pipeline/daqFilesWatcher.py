@@ -15,7 +15,7 @@ from mongoDbUtil import mongoDbUtil
 
 # global variables
 __verbose = False
-__daqFilesPath = ''
+__daq_files_path = ''
 
 def main():
     logFormat = '%(asctime)-15s %(levelname)s: %(message)s'
@@ -56,12 +56,12 @@ def load_configuration(configuration_file):
     parameters = yaml.load(f)
     f.close()
 
-    __daqFilesPath = parameters['daqFilesPath']
+    __daq_files_path = parameters['daq_files_path']
 
-    if os.path.isdir(__daqFilesPath):
-        logging.info("Set to watch %s"%__daqFilesPath)
+    if os.path.isdir(__daq_files_path):
+        logging.info("Set to watch %s"%__daq_files_path)
     else:
-        logging.error("Path %s does not exist or is not a directory!"%__daqFilesPath)
+        logging.error("Path %s does not exist or is not a directory!"%__daq_files_path)
         exit(1)
 
 if __name__ == '__main__':
