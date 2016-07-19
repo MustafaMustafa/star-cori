@@ -7,7 +7,6 @@ Utility class to handle connections to mongoDb and fetching collections
 """
 
 import logging
-import time
 import pymongo
 from pymongo import MongoClient
 
@@ -16,7 +15,8 @@ class mongoDbUtil:
        m = mongoDbUtil('admin')
        coll = m.db['myCollection']"""
 
-    logging.basicConfig(level=logging.INFO)
+    logFormat = '%(asctime)-15s %(levelname)s: %(message)s'
+    logging.basicConfig(level=logging.INFO, format=logFormat)
 
     def __init__(self, user = 'readOnly', dbName = 'STARProdState', dbServer='mongodb01.nersc.gov'):
 
@@ -43,5 +43,4 @@ class mongoDbUtil:
             self.db = self._client[self._dbName]
 
         except pymongo.errors.ServerSelectionTimeoutError as err:
-            logging.info(time.strftime('%c'))
             logging.error("ERROR: Could not connect to DB server ...")
