@@ -31,7 +31,7 @@ def main():
     load_configuration(args.configuration)
 
     database = MongoDbUtil('admin').database()
-    init(database['daqFilesWatcher'])
+    init_stats(database['daqFilesWatcher'])
 
     heartbeat_thread = threading.Thread(target=heartbeat, args=(database['daqFilesWatcher'],))
     heartbeat_thread.setDaemon(True)
@@ -94,7 +94,7 @@ def load_configuration(configuration_file):
         logging.info("Heart beat disabled in configuration file")
         __global_parameters['beat_your_heart'] = False
 
-def init(hearbeat_coll):
+def init_stats(hearbeat_coll):
     """Intialize stats from DB latest record"""
 
     last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
