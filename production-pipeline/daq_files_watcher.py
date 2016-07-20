@@ -9,7 +9,7 @@ import time
 import datetime
 import threading
 import yaml
-from mongoDbUtil import mongoDbUtil
+from mongoDbUtil import MongoDbUtil
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
@@ -30,7 +30,7 @@ def main():
     args = get_args()
     load_configuration(args.configuration)
 
-    data_base = mongoDbUtil('admin').db
+    data_base = MongoDbUtil('admin').database()
     init()
 
     heartbeat_thread = threading.Thread(target=heartbeat, args=(data_base['daqFilesWatcher'],))
