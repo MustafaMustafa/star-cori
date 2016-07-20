@@ -20,7 +20,7 @@ __global_parameters = {'verbose' : False,
                        'daq_files_path' : '',
                        'daq_beat_your_heart' : True,
                        'daq_heartbeat_interval' : 15,
-                       'daq_files_stats' : {}}
+                       'files_stats' : {}}
 
 def main():
     """Daemon to watch for daq files at a specific path and populate the DB """
