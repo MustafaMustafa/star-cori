@@ -15,11 +15,12 @@ __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
 
 # global variables
-__verbose = False
-__daq_files_path = ''
-__beat_your_heart = True
-__heartbeat_interval = 15
-__files_stats = {}
+# pylint: disable=C0103
+__global_parameters = {'verbose' : False,
+                       'daq_files_path' : '',
+                       'daq_beat_your_heart' : True,
+                       'daq_heartbeat_interval' : 15,
+                       'daq_files_stats' : {}}
 
 def main():
     """Daemon to watch for daq files at a specific path and populate the DB """
@@ -54,8 +55,7 @@ def get_args():
         logging.info("Usage: %s -c configuration.yaml", sys.argv[0])
         exit(1)
 
-    global __verbose
-    __verbose = args.verbose
+    __global_parameters['verbose'] = args.verbose
 
     return args
 
@@ -74,43 +74,40 @@ def load_configuration(configuration_file):
     conf_file.close()
 
     # set daq files directory path
-    global __daq_files_path
-    __daq_files_path = parameters['daq_files_path']
+    __global_parameters['daq_files_path'] = parameters['daq_files_path']
 
-    if os.path.isdir(__daq_files_path):
-        logging.info("Set to watch %s", __daq_files_path)
+    if os.path.isdir(__global_parameters['daq_files_path']):
+        logging.info("Set to watch %s", __global_parameters['daq_files_path'])
     else:
-        logging.error("Path %s does not exist or is not a directory!", __daq_files_path)
+        logging.error("Path %s does not exist or is not a directory!", __global_parameters['daq_files_path'])
         # exit(1)
 
     # set heartbeat parameters
-    global __beat_your_heart
-    global __heartbeat_interval
     if 'heartbeat' in parameters and parameters['heartbeat'] == 'True':
-        __beat_your_heart = True
+        __global_parameters['beat_your_heart'] = True
 
         if 'heartbeat_interval' in parameters:
-            __heartbeat_interval = int(parameters['heartbeat_interval'])
+            __global_parameters['heartbeat_interval'] = int(parameters['heartbeat_interval'])
 
-        logging.info("Heartbeat interval set to %i seconds", __heartbeat_interval)
+        logging.info("Heartbeat interval set to %i seconds", __global_parameters['heartbeat_interval'])
     else:
         logging.info("Heart beat disabled in configuration file")
-        __beat_your_heart = False
+        __global_parameters['beat_your_heart'] = False
 
 def init():
     """Intialize variables from DB """
-    __files_stats['numberOfFilesOnDisk'] = 0
-    __files_stats['totalNumberOfFilesSeen'] = 0
+    __global_parameters['files_stats']['numberOfFilesOnDisk'] = 0
+    __global_parameters['files_stats']['totalNumberOfFilesSeen'] = 0
 
 def heartbeat(hb_coll):
     """Send a heartbeat to DB """
 
-    while __beat_your_heart:
-        entry = {'numberOfFilesOnDisk': __files_stats['numberOfFilesOnDisk'],
-                 'totalNumberOfFilesSeen' : __files_stats['totalNumberOfFilesSeen'],
+    while __global_parameters['beat_your_heart']:
+        entry = {'numberOfFilesOnDisk': __global_parameters['files_stats']['numberOfFilesOnDisk'],
+                 'totalNumberOfFilesSeen' : __global_parameters['files_stats']['totalNumberOfFilesSeen'],
                  'date' : datetime.datetime.utcnow()}
         hb_coll.insert(entry)
-        time.sleep(__heartbeat_interval)
+        time.sleep(__global_parameters['heartbeat_interval'])
 
 if __name__ == '__main__':
     main()
