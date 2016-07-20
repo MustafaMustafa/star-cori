@@ -9,7 +9,7 @@ import time
 import datetime
 import threading
 import yaml
-from mongoDbUtil import MongoDbUtil
+from MongoDbUtil import MongoDbUtil
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
