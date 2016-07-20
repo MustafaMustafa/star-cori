@@ -30,10 +30,10 @@ def main():
     args = get_args()
     load_configuration(args.configuration)
 
-    data_base = MongoDbUtil('admin').database()
-    init()
+    database = MongoDbUtil('admin').database()
+    init(database['daqFilesWatcher'])
 
-    heartbeat_thread = threading.Thread(target=heartbeat, args=(data_base['daqFilesWatcher'],))
+    heartbeat_thread = threading.Thread(target=heartbeat, args=(database['daqFilesWatcher'],))
     heartbeat_thread.setDaemon(True)
     heartbeat_thread.start()
 
@@ -94,10 +94,12 @@ def load_configuration(configuration_file):
         logging.info("Heart beat disabled in configuration file")
         __global_parameters['beat_your_heart'] = False
 
-def init():
-    """Intialize variables from DB """
-    __global_parameters['files_stats']['numberOfFilesOnDisk'] = 0
-    __global_parameters['files_stats']['totalNumberOfFilesSeen'] = 0
+def init(hearbeat_coll):
+    """Intialize stats from DB latest record"""
+
+    last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
+    __global_parameters['files_stats']['numberOfFilesOnDisk'] = last_doc['numberOfFilesOnDisk']
+    __global_parameters['files_stats']['totalNumberOfFilesSeen'] = last_doc['totalNumberOfFilesSeen']
 
 def heartbeat(hb_coll):
     """Send a heartbeat to DB """
