@@ -5,7 +5,7 @@ from MongoDbUtil import MongoDbUtil
 
 def main():
 
-    daqFilesWatcherColl = mongoDbUtil('ro').db['daqFilesWatcher']
+    daqFilesWatcherColl = MongoDbUtil('ro').database()['daqFilesWatcher']
     print daqFilesWatcherColl
 
     for it in daqFilesWatcherColl.find():
