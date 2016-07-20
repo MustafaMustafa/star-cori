@@ -1,4 +1,7 @@
-from mongoDbUtil import mongoDbUtil
+#!/usr/bin/env python
+""" Example use of mongoDB swiss knife """
+
+from MongoDbUtil import MongoDbUtil
 
 def main():
 
