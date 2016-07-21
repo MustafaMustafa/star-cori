@@ -23,8 +23,8 @@ __global_parameters = {'verbose' : False,
                        'db_production_files_collection': '',
                        'daq_files_path' : '',
                        'crawl_disk_every' : 900,
-                       'daq_beat_your_heart' : True,
-                       'daq_heartbeat_interval' : 15,
+                       'heartbeat' : True,
+                       'heartbeat_interval' : 15,
                        'files_stats' : {}}
 
 def main():
@@ -38,7 +38,7 @@ def main():
     database = MongoDbUtil('admin', db_server=__global_parameters['db_server'], db_name=__global_parameters['db_name']).database()
     init_stats(database[__global_parameters['db_collection']])
 
-    if __global_parameters['beat_your_heart']:
+    if __global_parameters['heartbeat']:
         heartbeat_thread = threading.Thread(target=heartbeat, args=(database[__global_parameters['db_collection']],))
         heartbeat_thread.setDaemon(True)
         heartbeat_thread.start()
@@ -69,9 +69,10 @@ def get_args():
 def load_configuration(configuration_file):
     """Load parameters from configuration file """
 
+    logging.info("-------------------------------------------------------------------------")
     # open configuration file
     if os.path.exists(configuration_file):
-        logging.info("Loading configuration file ...")
+        logging.info("Loading configuration file %s", configuration_file)
     else:
         logging.error("Configuration file %s doesn't exist!", configuration_file)
         exit(1)
@@ -87,39 +88,34 @@ def load_configuration(configuration_file):
     set_config_parameter(parameters, 'db_production_files_collection')
 
     # set daq files directory path
-    __global_parameters['daq_files_path'] = parameters['daq_files_path']
+    set_config_parameter(parameters, 'daq_files_path')
 
-    if os.path.isdir(__global_parameters['daq_files_path']):
-        logging.info("Set to watch %s", __global_parameters['daq_files_path'])
-    else:
+    if not os.path.isdir(__global_parameters['daq_files_path']):
         logging.error("Path %s does not exist or is not a directory!", __global_parameters['daq_files_path'])
         exit(1)
 
     # set disk search periodicity
-    __global_parameters['crawl_disk_every'] = int(parameters['crawl_disk_every'])
+    set_config_parameter(parameters, 'crawl_disk_every', 'seconds')
 
     # set heartbeat parameters
-    if 'heartbeat' in parameters and parameters['heartbeat'] == 'True':
-        __global_parameters['beat_your_heart'] = True
-
-        if 'heartbeat_interval' in parameters:
-            __global_parameters['heartbeat_interval'] = int(parameters['heartbeat_interval'])
-
-        logging.info("Heartbeat interval set to %i seconds", __global_parameters['heartbeat_interval'])
+    set_config_parameter(parameters, 'heartbeat')
+    if __global_parameters['heartbeat']:
+        set_config_parameter(parameters, 'heartbeat_interval', 'seconds')
     else:
         logging.info("Heart beat disabled in configuration file")
-        __global_parameters['beat_your_heart'] = False
 
-def set_config_parameter(parameters, parameter_name):
+    logging.info("Done loading configuration")
+    logging.info("-------------------------------------------------------------------------")
+
+def set_config_parameter(parameters, parameter_name, units=''):
     """ To set global parameters if the it exists, exists otherwise """
 
     if parameter_name in parameters:
         __global_parameters[parameter_name] = parameters[parameter_name]
-        logging.info("%s: %s", parameter_name, __global_parameters[parameter_name])
+        logging.info("%s: %s %s", parameter_name, __global_parameters[parameter_name], units)
     else:
         logging.error("%s is not set in the configuration file", parameter_name)
         exit(1)
-
 
 def init_stats(hearbeat_coll):
     """Intialize stats from DB latest record"""
@@ -140,7 +136,7 @@ def init_stats(hearbeat_coll):
 def heartbeat(hb_coll):
     """Send a heartbeat to DB """
 
-    while __global_parameters['beat_your_heart']:
+    while __global_parameters['heartbeat']:
         entry = {'numberOfFilesOnDisk': __global_parameters['files_stats']['numberOfFilesOnDisk'],
                  'totalNumberOfFilesSeen' : __global_parameters['files_stats']['totalNumberOfFilesSeen'],
                  'date' : datetime.datetime.utcnow()}

@@ -4,7 +4,7 @@ db_name: 'STARProdState',
 db_collection: 'daq_files_watcher_P16id',
 db_production_files_collection: 'production_files_P16id',
 daq_files_path: '/home/mustafa/research/star-cori/workdir/fakeDaqs',
-crawl_disk_every: '10', #seconds
-heartbeat: 'True',
-heartbeat_interval: '5' #seconds
+crawl_disk_every: 900, #seconds
+heartbeat: True,
+heartbeat_interval: 60 #seconds
 }
