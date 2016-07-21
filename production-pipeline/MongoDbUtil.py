@@ -3,21 +3,21 @@
 Utility class to handle connections to mongoDb and fetching collections
 """
 
-import logging
 import os
 import pymongo
 from pymongo import MongoClient
+import custom_logger
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
+
 
 class MongoDbUtil(object):
     """Usage e.g.
        m = mongoDbUtil('admin')
        coll = m.db['myCollection']"""
 
-    logFormat = '%(asctime)-15s %(levelname)s: %(message)s'
-    logging.basicConfig(level=logging.INFO, format=logFormat)
+    __logger = custom_logger.get_logger(__name__)
 
     def __init__(self, user='readOnly', db_name='STARProdState', db_server='mongodb01.nersc.gov'):
 
@@ -29,7 +29,7 @@ class MongoDbUtil(object):
             self.__password = os.getenv('STARProdState_ro_pass', 'FALSE')
 
         if self.__password == 'FALSE':
-            logging.error("Password for user %s is not available", self.__user)
+            self.__logger.error("Password for user %s is not available", self.__user)
             exit(1)
 
         self.__db_name = db_name
@@ -41,7 +41,7 @@ class MongoDbUtil(object):
         """Establish connection to DB
         """
 
-        logging.info("Connecting to %s@%s. User: %s ...", self.__db_server, self.__db_server, self.__user)
+        self.__logger.info("Connecting to %s@%s. User: %s ...", self.__db_server, self.__db_server, self.__user)
         connection_timeout_max = 5
         try:
             self.__client = MongoClient('mongodb://{0}:{1}@{2}/{3}'.format(self.__user, self.__password, self.__db_server, self.__db_name),
@@ -51,7 +51,7 @@ class MongoDbUtil(object):
             del self.__password
 
         except pymongo.errors.ServerSelectionTimeoutError:
-            logging.error("ERROR: Could not connect to DB server ...")
+            self.__logger.error("ERROR: Could not connect to DB server ...")
             exit(1)
 
     def database(self):

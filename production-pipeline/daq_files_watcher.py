@@ -1,7 +1,6 @@
 #!/bin/usr/python
 """Daemon to watch for daq files at a specific path and populate the DB """
 
-import logging
 import argparse
 import sys
 import os
@@ -10,6 +9,7 @@ import datetime
 import threading
 import yaml
 from MongoDbUtil import MongoDbUtil
+import custom_logger
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
@@ -27,10 +27,10 @@ __global_parameters = {'verbose' : False,
                        'heartbeat_interval' : 15,
                        'files_stats' : {}}
 
+logger = custom_logger.get_logger(__name__)
+
 def main():
     """Daemon to watch for daq files at a specific path and populate the DB """
-    log_format = '%(asctime)-15s %(levelname)s: %(message)s'
-    logging.basicConfig(level=logging.INFO, format=log_format)
 
     args = get_args()
     load_configuration(args.configuration)
@@ -42,7 +42,7 @@ def main():
         heartbeat_thread = threading.Thread(target=heartbeat, args=(database[__global_parameters['db_collection']],))
         heartbeat_thread.setDaemon(True)
         heartbeat_thread.start()
-        logging.info("Heartbeat daemon spawned")
+        logger.info("Heartbeat daemon spawned")
 
     while True:
         crawl_disk(database[__global_parameters['db_production_files_collection']])
@@ -58,8 +58,8 @@ def get_args():
     args = parser.parse_args()
 
     if not args.configuration:
-        logging.error("Need configuration file")
-        logging.info("Usage: %s -c configuration.yaml", sys.argv[0])
+        logger.error("Need configuration file")
+        logger.info("Usage: %s -c configuration.yaml", sys.argv[0])
         exit(1)
 
     __global_parameters['verbose'] = args.verbose
@@ -69,12 +69,12 @@ def get_args():
 def load_configuration(configuration_file):
     """Load parameters from configuration file """
 
-    logging.info("-------------------------------------------------------------------------")
+    logger.info("-------------------------------------------------------------------------")
     # open configuration file
     if os.path.exists(configuration_file):
-        logging.info("Loading configuration file %s", configuration_file)
+        logger.info("Loading configuration file %s", configuration_file)
     else:
-        logging.error("Configuration file %s doesn't exist!", configuration_file)
+        logger.error("Configuration file %s doesn't exist!", configuration_file)
         exit(1)
 
     conf_file = file(configuration_file, 'r')
@@ -91,7 +91,7 @@ def load_configuration(configuration_file):
     set_config_parameter(parameters, 'daq_files_path')
 
     if not os.path.isdir(__global_parameters['daq_files_path']):
-        logging.error("Path %s does not exist or is not a directory!", __global_parameters['daq_files_path'])
+        logger.error("Path %s does not exist or is not a directory!", __global_parameters['daq_files_path'])
         exit(1)
 
     # set disk search periodicity
@@ -102,25 +102,25 @@ def load_configuration(configuration_file):
     if __global_parameters['heartbeat']:
         set_config_parameter(parameters, 'heartbeat_interval', 'seconds')
     else:
-        logging.info("Heart beat disabled in configuration file")
+        logger.info("Heart beat disabled in configuration file")
 
-    logging.info("Done loading configuration")
-    logging.info("-------------------------------------------------------------------------")
+    logger.info("Done loading configuration")
+    logger.info("-------------------------------------------------------------------------")
 
 def set_config_parameter(parameters, parameter_name, units=''):
     """ To set global parameters if the it exists, exists otherwise """
 
     if parameter_name in parameters:
         __global_parameters[parameter_name] = parameters[parameter_name]
-        logging.info("%s: %s %s", parameter_name, __global_parameters[parameter_name], units)
+        logger.info("%s: %s %s", parameter_name, __global_parameters[parameter_name], units)
     else:
-        logging.error("%s is not set in the configuration file", parameter_name)
+        logger.error("%s is not set in the configuration file", parameter_name)
         exit(1)
 
 def init_stats(hearbeat_coll):
     """Intialize stats from DB latest record"""
 
-    logging.info("Initializing variables from DB ...")
+    logger.info("Initializing variables from DB ...")
     if hearbeat_coll.count():
         last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
         __global_parameters['files_stats']['total_files_on_disk'] = last_doc['total_files_on_disk']
@@ -129,8 +129,8 @@ def init_stats(hearbeat_coll):
         __global_parameters['files_stats']['total_files_on_disk'] = 0
         __global_parameters['files_stats']['total_files_seen'] = 0
 
-    logging.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['total_files_on_disk'])
-    logging.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['total_files_seen'])
+    logger.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['total_files_on_disk'])
+    logger.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['total_files_seen'])
 
 
 def heartbeat(hb_coll):
@@ -142,7 +142,7 @@ def heartbeat(hb_coll):
                  'date' : datetime.datetime.utcnow()}
         hb_coll.insert(entry)
         if __global_parameters['verbose']:
-            logging.info("heartbeat: %i files on disk, %i total files seen", entry['total_files_on_disk'], entry['total_files_seen'])
+            logger.info("heartbeat: %i files on disk, %i total files seen", entry['total_files_on_disk'], entry['total_files_seen'])
         time.sleep(__global_parameters['heartbeat_interval'])
 
 def crawl_disk(files_coll):
@@ -175,7 +175,7 @@ def crawl_disk(files_coll):
     __global_parameters['files_stats']['total_files_on_disk'] = number_files_on_disk
     __global_parameters['files_stats']['total_files_seen'] += number_new_files
 
-    logging.info("Added %i new daq file(s) to DB", number_new_files)
+    logger.info("Added %i new daq file(s) to DB", number_new_files)
 
 def get_day_and_number(baseName):
     """Return day and runnumber"""
