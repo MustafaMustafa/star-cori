@@ -33,9 +33,11 @@ def main():
     database = MongoDbUtil('admin').database()
     init_stats(database['daqFilesWatcher'])
 
-    heartbeat_thread = threading.Thread(target=heartbeat, args=(database['daqFilesWatcher'],))
-    heartbeat_thread.setDaemon(True)
-    heartbeat_thread.start()
+    if __global_parameters['beat_your_heart']:
+        heartbeat_thread = threading.Thread(target=heartbeat, args=(database['daqFilesWatcher'],))
+        heartbeat_thread.setDaemon(True)
+        heartbeat_thread.start()
+        logging.info("Heartbeat daemon spawned")
 
     # This is just to keep the main thread running
     while True:
@@ -97,9 +99,14 @@ def load_configuration(configuration_file):
 def init_stats(hearbeat_coll):
     """Intialize stats from DB latest record"""
 
+    logging.info("Initializing variables from DB ...")
     last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
     __global_parameters['files_stats']['numberOfFilesOnDisk'] = last_doc['numberOfFilesOnDisk']
     __global_parameters['files_stats']['totalNumberOfFilesSeen'] = last_doc['totalNumberOfFilesSeen']
+
+    logging.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['numberOfFilesOnDisk'])
+    logging.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['totalNumberOfFilesSeen'])
+
 
 def heartbeat(hb_coll):
     """Send a heartbeat to DB """
