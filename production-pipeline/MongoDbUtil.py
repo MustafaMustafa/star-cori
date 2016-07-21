@@ -1,4 +1,3 @@
-#!/bin/usr/python
 """
 Utility class to handle connections to mongoDb and fetching collections
 """
