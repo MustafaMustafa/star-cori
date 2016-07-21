@@ -100,13 +100,28 @@ def load_configuration(configuration_file):
         logging.info("Heart beat disabled in configuration file")
         __global_parameters['beat_your_heart'] = False
 
+def set_config_parameter(parameters, parameter_name):
+    """ To set global parameters if the it exists, exists otherwise """
+
+    if parameter_name in parameters:
+        __global_parameters[parameter_name] = parameters[parameter_name]
+        logging.info("%s: %s", parameter_name, __global_parameters[parameter_name])
+    else:
+        logging.error("%s is not set in the configuration file", parameter_name)
+        exit(1)
+
+
 def init_stats(hearbeat_coll):
     """Intialize stats from DB latest record"""
 
     logging.info("Initializing variables from DB ...")
-    last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
-    __global_parameters['files_stats']['numberOfFilesOnDisk'] = last_doc['numberOfFilesOnDisk']
-    __global_parameters['files_stats']['totalNumberOfFilesSeen'] = last_doc['totalNumberOfFilesSeen']
+    if hearbeat_coll.count():
+        last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
+        __global_parameters['files_stats']['numberOfFilesOnDisk'] = last_doc['numberOfFilesOnDisk']
+        __global_parameters['files_stats']['totalNumberOfFilesSeen'] = last_doc['totalNumberOfFilesSeen']
+    else:
+        __global_parameters['files_stats']['numberOfFilesOnDisk'] = 0
+        __global_parameters['files_stats']['totalNumberOfFilesSeen'] = 0
 
     logging.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['numberOfFilesOnDisk'])
     logging.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['totalNumberOfFilesSeen'])
