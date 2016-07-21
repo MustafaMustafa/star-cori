@@ -35,7 +35,7 @@ def main():
     args = get_args()
     load_configuration(args.configuration)
 
-    database = MongoDbUtil('admin').database()
+    database = MongoDbUtil('admin', db_server=__global_parameters['db_server'], db_name=__global_parameters['db_name']).database()
     init_stats(database[__global_parameters['db_collection']])
 
     if __global_parameters['beat_your_heart']:
