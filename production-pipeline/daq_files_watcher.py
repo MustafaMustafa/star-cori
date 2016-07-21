@@ -130,14 +130,19 @@ def crawl_disk(files_coll):
     for dirname, _, filenames in os.walk(__global_parameters['daq_files_path']):
 
         for filename in filenames:
+            if filename.find('.daq') < 0:
+                continue
+            else:
+                basename = filename[0:filename.find('.daq')]
+
             number_files_on_disk += 1
-            db_search = files_coll.find({'daq_filename' : filename})
+            db_search = files_coll.find({'basename' : basename})
             if not db_search.count():
                 number_new_files += 1
                 path = os.path.join(dirname, filename)
                 timestamp = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(os.path.getmtime(path)))
                 day, runnumber = get_day_and_number(filename)
-                doc = {'basename' : filename,
+                doc = {'basename' : basename,
                        'daq_path' : path,
                        'daq_timestamp' : timestamp,
                        'day': day,
