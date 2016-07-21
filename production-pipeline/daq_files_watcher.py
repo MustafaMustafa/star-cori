@@ -123,26 +123,26 @@ def init_stats(hearbeat_coll):
     logging.info("Initializing variables from DB ...")
     if hearbeat_coll.count():
         last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
-        __global_parameters['files_stats']['numberOfFilesOnDisk'] = last_doc['numberOfFilesOnDisk']
-        __global_parameters['files_stats']['totalNumberOfFilesSeen'] = last_doc['totalNumberOfFilesSeen']
+        __global_parameters['files_stats']['total_files_on_disk'] = last_doc['total_files_on_disk']
+        __global_parameters['files_stats']['total_files_seen'] = last_doc['total_files_seen']
     else:
-        __global_parameters['files_stats']['numberOfFilesOnDisk'] = 0
-        __global_parameters['files_stats']['totalNumberOfFilesSeen'] = 0
+        __global_parameters['files_stats']['total_files_on_disk'] = 0
+        __global_parameters['files_stats']['total_files_seen'] = 0
 
-    logging.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['numberOfFilesOnDisk'])
-    logging.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['totalNumberOfFilesSeen'])
+    logging.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['total_files_on_disk'])
+    logging.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['total_files_seen'])
 
 
 def heartbeat(hb_coll):
     """Send a heartbeat to DB """
 
     while __global_parameters['heartbeat']:
-        entry = {'numberOfFilesOnDisk': __global_parameters['files_stats']['numberOfFilesOnDisk'],
-                 'totalNumberOfFilesSeen' : __global_parameters['files_stats']['totalNumberOfFilesSeen'],
+        entry = {'total_files_on_disk': __global_parameters['files_stats']['total_files_on_disk'],
+                 'total_files_seen' : __global_parameters['files_stats']['total_files_seen'],
                  'date' : datetime.datetime.utcnow()}
         hb_coll.insert(entry)
         if __global_parameters['verbose']:
-            logging.info("heartbeat: %i files on disk, %i total files seen", entry['numberOfFilesOnDisk'], entry['totalNumberOfFilesSeen'])
+            logging.info("heartbeat: %i files on disk, %i total files seen", entry['total_files_on_disk'], entry['total_files_seen'])
         time.sleep(__global_parameters['heartbeat_interval'])
 
 def crawl_disk(files_coll):
@@ -172,8 +172,8 @@ def crawl_disk(files_coll):
                        'runnumber': runnumber}
                 files_coll.insert(doc)
 
-    __global_parameters['files_stats']['numberOfFilesOnDisk'] = number_files_on_disk
-    __global_parameters['files_stats']['totalNumberOfFilesSeen'] += number_new_files
+    __global_parameters['files_stats']['total_files_on_disk'] = number_files_on_disk
+    __global_parameters['files_stats']['total_files_seen'] += number_new_files
 
     logging.info("Added %i new daq file(s) to DB", number_new_files)
 
