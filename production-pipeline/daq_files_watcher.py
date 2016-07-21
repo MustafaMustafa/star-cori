@@ -17,6 +17,10 @@ __email__ = "mmustafa@lbl.gov"
 # global variables
 # pylint: disable=C0103
 __global_parameters = {'verbose' : False,
+                       'db_server': '',
+                       'db_name': '',
+                       'db_collection': '',
+                       'db_production_files_collection': '',
                        'daq_files_path' : '',
                        'crawl_disk_every' : 900,
                        'daq_beat_your_heart' : True,
@@ -32,16 +36,16 @@ def main():
     load_configuration(args.configuration)
 
     database = MongoDbUtil('admin').database()
-    init_stats(database['daqFilesWatcher'])
+    init_stats(database[__global_parameters['db_collection']])
 
     if __global_parameters['beat_your_heart']:
-        heartbeat_thread = threading.Thread(target=heartbeat, args=(database['daqFilesWatcher'],))
+        heartbeat_thread = threading.Thread(target=heartbeat, args=(database[__global_parameters['db_collection']],))
         heartbeat_thread.setDaemon(True)
         heartbeat_thread.start()
         logging.info("Heartbeat daemon spawned")
 
     while True:
-        crawl_disk(database['production_files'])
+        crawl_disk(database[__global_parameters['db_production_files_collection']])
         time.sleep(__global_parameters['crawl_disk_every'])
 
 def get_args():
@@ -75,6 +79,12 @@ def load_configuration(configuration_file):
     conf_file = file(configuration_file, 'r')
     parameters = yaml.load(conf_file)
     conf_file.close()
+
+    # set db parameters
+    set_config_parameter(parameters, 'db_server')
+    set_config_parameter(parameters, 'db_name')
+    set_config_parameter(parameters, 'db_collection')
+    set_config_parameter(parameters, 'db_production_files_collection')
 
     # set daq files directory path
     __global_parameters['daq_files_path'] = parameters['daq_files_path']
