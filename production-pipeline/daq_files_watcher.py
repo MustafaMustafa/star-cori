@@ -175,7 +175,7 @@ def crawl_disk(files_coll):
     __global_parameters['files_stats']['numberOfFilesOnDisk'] = number_files_on_disk
     __global_parameters['files_stats']['totalNumberOfFilesSeen'] += number_new_files
 
-    logging.info("Added %i new daq files to DB", number_new_files)
+    logging.info("Added %i new daq file(s) to DB", number_new_files)
 
 def get_day_and_number(baseName):
     """Return day and runnumber"""
