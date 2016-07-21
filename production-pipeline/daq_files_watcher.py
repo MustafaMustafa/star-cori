@@ -141,6 +141,8 @@ def heartbeat(hb_coll):
                  'totalNumberOfFilesSeen' : __global_parameters['files_stats']['totalNumberOfFilesSeen'],
                  'date' : datetime.datetime.utcnow()}
         hb_coll.insert(entry)
+        if __global_parameters['verbose']:
+            logging.info("heartbeat: %i files on disk, %i total files seen", entry['numberOfFilesOnDisk'], entry['totalNumberOfFilesSeen'])
         time.sleep(__global_parameters['heartbeat_interval'])
 
 def crawl_disk(files_coll):
