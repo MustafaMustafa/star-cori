@@ -1,5 +1,6 @@
 {
-daq_files_path: '/global/project/projectdirs/starprod/rnc/mustafa/daq/',
+daq_files_path: '/home/mustafa/research/star-cori/workdir/fakeDaqs',
+crawl_disk_every: '900', #seconds
 heartbeat: 'True',
-heartbeat_interval: '5'
+heartbeat_interval: '5' #seconds
 }

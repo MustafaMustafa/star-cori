@@ -18,6 +18,7 @@ __email__ = "mmustafa@lbl.gov"
 # pylint: disable=C0103
 __global_parameters = {'verbose' : False,
                        'daq_files_path' : '',
+                       'crawl_disk_every' : 900,
                        'daq_beat_your_heart' : True,
                        'daq_heartbeat_interval' : 15,
                        'files_stats' : {}}
@@ -39,9 +40,9 @@ def main():
         heartbeat_thread.start()
         logging.info("Heartbeat daemon spawned")
 
-    # This is just to keep the main thread running
     while True:
-        time.sleep(1e4)
+        crawl_disk(database['production_files'])
+        time.sleep(__global_parameters['crawl_disk_every'])
 
 def get_args():
     """Parses command line arguments """
@@ -82,7 +83,10 @@ def load_configuration(configuration_file):
         logging.info("Set to watch %s", __global_parameters['daq_files_path'])
     else:
         logging.error("Path %s does not exist or is not a directory!", __global_parameters['daq_files_path'])
-        # exit(1)
+        exit(1)
+
+    # set disk search periodicity
+    __global_parameters['crawl_disk_every'] = int(parameters['crawl_disk_every'])
 
     # set heartbeat parameters
     if 'heartbeat' in parameters and parameters['heartbeat'] == 'True':
@@ -117,6 +121,47 @@ def heartbeat(hb_coll):
                  'date' : datetime.datetime.utcnow()}
         hb_coll.insert(entry)
         time.sleep(__global_parameters['heartbeat_interval'])
+
+def crawl_disk(files_coll):
+    """Crawls over the disk and updates the DB"""
+
+    number_files_on_disk = 0
+    number_new_files = 0
+    for dirname, _, filenames in os.walk(__global_parameters['daq_files_path']):
+
+        for filename in filenames:
+            number_files_on_disk += 1
+            db_search = files_coll.find({'daq_filename' : filename})
+            if not db_search.count():
+                number_new_files += 1
+                path = os.path.join(dirname, filename)
+                timestamp = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(os.path.getmtime(path)))
+                day, runnumber = get_day_and_number(filename)
+                doc = {'basename' : filename,
+                       'daq_path' : path,
+                       'daq_timestamp' : timestamp,
+                       'day': day,
+                       'runnumber': runnumber}
+                files_coll.insert(doc)
+
+    __global_parameters['files_stats']['numberOfFilesOnDisk'] = number_files_on_disk
+    __global_parameters['files_stats']['totalNumberOfFilesSeen'] += number_new_files
+
+    logging.info("Added %i new daq files to DB", number_new_files)
+
+def get_day_and_number(baseName):
+    """Return day and runnumber"""
+
+    idx = baseName.find('_raw')
+
+    if idx:
+        runnumber = int(baseName[idx-8:idx])
+        day = int((runnumber%1e6)/1e3)
+    else:
+        day = -1
+        runnumber = -1
+
+    return day, runnumber
 
 if __name__ == '__main__':
     main()
