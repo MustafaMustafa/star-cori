@@ -4,6 +4,7 @@ Utility class to handle connections to mongoDb and fetching collections
 """
 
 import logging
+import os
 import pymongo
 from pymongo import MongoClient
 
@@ -22,10 +23,14 @@ class MongoDbUtil(object):
 
         if user == 'admin':
             self.__user = 'STARProdState_admin'
-            self.__password = 'w2e23sddf21'
+            self.__password = os.getenv('STARProdState_admin_pass', 'FALSE')
         else:
             self.__user = 'STARProdState_ro'
-            self.__password = 'w3s42dwq42'
+            self.__password = os.getenv('STARProdState_ro_pass', 'FALSE')
+
+        if self.__password == 'FALSE':
+            logging.error("Password for user %s is not available", self.__user)
+            exit(1)
 
         self.__db_name = db_name
         self.__db_server = db_server
@@ -43,6 +48,7 @@ class MongoDbUtil(object):
                                         serverSelectionTimeoutMS=connection_timeout_max)
             self.__client.server_info() # attempt a connection
             self.__database = self.__client[self.__db_name]
+            del self.__password
 
         except pymongo.errors.ServerSelectionTimeoutError:
             logging.error("ERROR: Could not connect to DB server ...")
