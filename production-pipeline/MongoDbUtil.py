@@ -4,6 +4,7 @@ Utility class to handle connections to mongoDb and fetching collections
 
 import os
 import pymongo
+import base64
 from pymongo import MongoClient
 import custom_logger
 
@@ -43,11 +44,11 @@ class MongoDbUtil(object):
         self.__logger.info("Connecting to %s@%s. User: %s ...", self.__db_server, self.__db_server, self.__user)
         connection_timeout_max = 5
         try:
-            self.__client = MongoClient('mongodb://{0}:{1}@{2}/{3}'.format(self.__user, self.__password, self.__db_server, self.__db_name),
+            self.__client = MongoClient('mongodb://{0}:{1}@{2}/{3}'.format(self.__user, base64.b64decode(self.__password), self.__db_server, self.__db_name),
                                         serverSelectionTimeoutMS=connection_timeout_max)
+            del self.__password
             self.__client.server_info() # attempt a connection
             self.__database = self.__client[self.__db_name]
-            del self.__password
 
         except pymongo.errors.ServerSelectionTimeoutError:
             self.__logger.error("ERROR: Could not connect to DB server ...")
