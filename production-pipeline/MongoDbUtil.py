@@ -44,7 +44,7 @@ class MongoDbUtil(object):
         self.__logger.info("Connecting to %s@%s. User: %s ...", self.__db_server, self.__db_server, self.__user)
         connection_timeout_max = 5
         try:
-            self.__client = MongoClient('mongodb://{0}:{1}@{2}/{3}'.format(self.__user, base64.b64decode(self.__password), self.__db_server, self.__db_name),
+            self.__client = MongoClient('mongodb://{0}:{1}@{2}/{3}'.format(self.__user, str(base64.b64decode(self.__password).decode('utf-8')), self.__db_server, self.__db_name),
                                         serverSelectionTimeoutMS=connection_timeout_max)
             del self.__password
             self.__client.server_info() # attempt a connection
