@@ -3,7 +3,7 @@
 
 import datetime
     
-from MongoDbUtil import MongoDbUtil
+from MongoDbUtilLean import MongoDbUtil
 
 def main():
 
@@ -32,6 +32,9 @@ def main():
     print 'seen records=', len(result),  'in last ',datetime.timedelta(minutes=mins), 'minutes'
 
     nr=len(result)
+    if nr <=0:
+        print "cant do math with no records, abort"
+        exit(1)
     delT=result[nr-1]['date'] - result[0]['date']
     delFile=result[nr-1]['totalNumberOfFilesSeen'] - result[0]['totalNumberOfFilesSeen']
     print 'two records diff:  delT=',delT, ' delFile=',delFile

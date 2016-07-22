@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 """ Example use of mongoDB swiss knife """
 
-from MongoDbUtilJan import MongoDbUtil
+from MongoDbUtilLean import MongoDbUtil
 
 def main():
 
     daqFilesWatcherColl = MongoDbUtil('ro').database()['daq_files_watcher_P16id']
     print daqFilesWatcherColl
 
-    for it in daqFilesWatcherColl.find():
+    mx=5
+    print "dump first ",mx
+    for it in daqFilesWatcherColl.find().limit(mx):
         print it
 
 if __name__ == '__main__':
