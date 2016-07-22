@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>2016 STAR pipeline Monitor</title>
+  <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+</head>
+<body>
+
+  <div  class="container">
+
+    <h1>STAR pipeline monitor ver 2</h1>
+
+<hr> 
+<table border="1"> 
+local client time now : <span id=timeNowClient> x2x </span>  <br>
+server query cnt=  {{ dbData['queryCnt']}} ,  server daemon started at time  {{ timeStartDaemon }} (PDT)<br>
+
+ Settings:  hearbeat timeout=<b> {{ hearbeatTimeoutSec }} (sec) </b> , differential period=  <b>{{ diffPeriodHour }} (hours)</b>
+</b>
+
+<hr>
+<tr>
+<th> <th>Staged <th> Submitted <th> Running <th> Merged <th> Archived
+
+<tr> 
+<th> collection <td> {{ dbData['watch']['coll'] }}
+<tr> 
+<th> last cnt<td> {{  dbData['watch']['count']}} <td> Submiter=x <td> Validator=x <td> muMerger=x <td> Cleaner=x
+
+<tr> 
+<th> heartbeat age  
+
+  {% if  dbData['watch']['alarm'] %}
+     <TD BGCOLOR="#ff00ff">
+    {% else %}
+     <TD>
+    {% endif %}
+{{  dbData['watch']['ageSec']}} (sec)
+
+
+<tr> 
+<th> tot files seen <td>  {{ dbData['watch']['seenFiles'] }} 
+
+<tr> 
+<th> delta files seen <td> {{ dbData['watch']['delSeenFiles'] }} 
+
+<tr> 
+<th>  files on disk <td>  {{ dbData['watch']['discFiles'] }} 
+
+<tr> 
+<th> avr files on disk <td>  {{ dbData['watch']['avrDiscFiles'] }} 
+
+<tr> 
+<th> alarm <td>  tot={{ dbData['watch']['alarm'] }} 
+
+</table>
+
+<hr>
+DEBUGGING : <br>
+dbData['watch']['alarm'] :   {% if  dbData['watch']['alarm'] %}
+      alarm=ON
+    {% else %}
+     alarm=OFF
+    {% endif %}
+
+<br>
+
+
+  </div>
+
+
+  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='main.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>html-jan-1</title>
+  <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>mngoDb-STAR  ver1  <br>
+URLs:  /g=oneRead , /m=monitoring<br></h1>
+Flask link   to /m  : <a href="{{url_for('getM')}}"> monitor page  </a> , uses  MongoDbUtilLean.py <br>
+ server (portal) started at time  {{ timeStartDaemon }} (PDT)
+<hr>
+Info: user={{ user_id }} 
+ &nbsp; &nbsp; &nbsp; 
+<hr>
+Query MongoDb <input type="submit" id="get88" class="btn btn-default" value="Get Data 2" onclick="location.href={{url_for('getM')}}" >  &nbsp; &nbsp; &nbsp;  parallel execution: goes  to new URL, and  Java script target
+<hr>
+<br> in Jason value of kot33 =<span id=kot33> 65</span>
+<br> in Jason value of kot35 fixed =<span id=kot35> -222</span>
+<br> in Jason2 value of kawa12 ={{kawa12}}
+
+
+  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='main.js') }}"></script>
+
+</body>
+</html>

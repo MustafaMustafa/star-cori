@@ -1,0 +1,16 @@
+The flask-web service runs on portal-auth,
+it reads data form mongoDB to which credentials are stored on a separate file.
+
+To set my enviroment on  portal-auth  execute:
+
+module load python/2.7.3
+source ~/env273/bin/activate
+pip freeze
+
+
+To launch service exec:
+
+ ./appRdMongo101.fcgi 
+
+The web page is located at:
+https://portal-auth.nersc.gov/demo/
