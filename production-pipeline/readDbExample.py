@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """ Example use of mongoDB swiss knife """
 
-from MongoDbUtil import MongoDbUtil
+from MongoDbUtilJan import MongoDbUtil
 
 def main():
 
