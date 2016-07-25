@@ -32,10 +32,10 @@ class StarSubmitSlurmEngine(object):
         self.__production_chain = parameters['production_chain']
         self.__queue = parameters['queue']
         self.__cputime_per_event = parameters['cputime_per_event']
-        self.__production_dir = parameters['production_dir']
-        self.__stdout_dir = parameters['stdout_dir']
-        self.__stderr_dir = parameters['stderr_dir']
-        self.__sbatch_dir = parameters['sbatch_dir']
+        self.__production_dir = os.path.abspath(parameters['production_dir'])
+        self.__stdout_dir = os.path.abspath(parameters['stdout_dir'])
+        self.__stderr_dir = os.path.abspath(parameters['stderr_dir'])
+        self.__sbatch_dir = os.path.abspath(parameters['sbatch_dir'])
         self.__production_file_extensions = parameters['extensions']
         self.__clean_scratch = parameters['clean_scratch']
         self.__submission_id = binascii.hexlify(os.urandom(16))
@@ -68,8 +68,10 @@ class StarSubmitSlurmEngine(object):
 
         #pylint: disable-msg=too-many-format-args
         command = 'shifter ./usr/lib64/openmpi-1.10/bin/mpirun --tag-output'
-        job_parameters['command'] = '%s -n %i runBfcChainMpi.o 1 %i \"%s\" \"%s\"'.format(command, number_of_cores,
-                                                                                          job_parameters['number_of_events'], self.__production_chain, job_parameters['daq_file'])
+        job_parameters['command'] = '%s -n %i runBfcChainMpi.o 1 %i \"%s\" \"%s\"'%(command, number_of_cores,
+                                                                                    job_parameters['number_of_events'],
+                                                                                    self.__production_chain,
+                                                                                    os.path.abspath(job_parameters['daq_path']))
 
         self.__make_sbatch_file(job_parameters)
 
