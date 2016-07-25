@@ -14,6 +14,7 @@ __email__ = "mmustafa@lbl.gov"
 # global variables
 # pylint: disable=C0103
 logger = custom_logger.get_logger(__name__)
+# pylint: enable=C0103
 
 def main():
     """a script to create slurm batch files to submit jobs to process a file list """

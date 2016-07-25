@@ -28,6 +28,7 @@ __global_parameters = {'verbose' : False,
                        'files_stats' : {}}
 
 logger = custom_logger.get_logger(__name__)
+# pylint: enable=C0103
 
 def main():
     """Daemon to watch for daq files at a specific path and populate the DB """

@@ -9,12 +9,11 @@ import custom_logger
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
 
-# pylint: disable=too-many-instance-attributes
-# The number of attributes is adequate for this class
 
 # global variables
 # pylint: disable=C0103
 logger = custom_logger.get_logger(__name__)
+# pylint: enable=C0103
 
 def mkdir(dirname):
     """mkdir if directory doesn't exist"""
@@ -22,6 +21,8 @@ def mkdir(dirname):
     if not os.path.isdir(dirname):
         subprocess.call(['mkdir', '-p', dirname])
 
+# pylint: disable=too-many-instance-attributes
+# The number of attributes is adequate for this class
 class StarSubmitSlurmEngine(object):
     """A class to create prepare submission enivornment and submit jobs sbatch files"""
 
@@ -72,6 +73,7 @@ class StarSubmitSlurmEngine(object):
                                                                                     job_parameters['number_of_events'],
                                                                                     self.__production_chain,
                                                                                     os.path.abspath(job_parameters['daq_path']))
+        #pylint: enable-msg=too-many-format-args
 
         self.__make_sbatch_file(job_parameters)
 
@@ -131,3 +133,4 @@ class StarSubmitSlurmEngine(object):
             sbatch_file.write('rm -r -f %s\n'%job_scratch)
 
         sbatch_file.close()
+# pylint: enable=too-many-instance-attributes
