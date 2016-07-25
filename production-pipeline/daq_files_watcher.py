@@ -163,7 +163,7 @@ def crawl_disk(files_coll):
             if not db_search.count():
                 number_new_files += 1
                 path = os.path.join(dirname, filename)
-                timestamp = time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(os.path.getmtime(path)))
+                timestamp = datetime.datetime.utcfromtimestamp(os.path.getmtime(path))
                 day, runnumber = get_day_and_number(filename)
                 doc = {'basename' : basename,
                        'daq_path' : path,
