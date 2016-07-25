@@ -90,13 +90,13 @@ def get_list_of_files(input_list):
 
     return file_list
 
-def get_day_and_number(baseName):
+def get_day_and_number(basename):
     """Return day and runnumber"""
 
-    idx = baseName.find('_raw')
+    idx = basename.find('_raw')
 
     if idx:
-        runnumber = int(baseName[idx-8:idx])
+        runnumber = int(basename[idx-8:idx])
         day = int((runnumber%1e6)/1e3)
     else:
         day = -1
