@@ -53,22 +53,28 @@ class StarSubmitSlurmEngine(object):
         job_parameters['estimated_running_time'] = estimated_running_time
 
         job_parameters['production_dir'] = '%s/%i/%i'%(self.__production_dir, job_parameters['day'], job_parameters['runnumber'])
-        job_parameters['log_dir'] = '%s/%i/%i'%(self.__stdout_dir, job_parameters['day'], job_parameters['runnumber'])
-        job_parameters['err_dir'] = '%s/%i/%i'%(self.__stdout_dir, job_parameters['day'], job_parameters['runnumber'])
+        job_parameters['log'] = '%s/%i/%i'%(self.__stdout_dir, job_parameters['day'], job_parameters['runnumber'])
+        job_parameters['err'] = '%s/%i/%i'%(self.__stdout_dir, job_parameters['day'], job_parameters['runnumber'])
+        job_parameters['sbatch'] = '%s/%i/%i'%(self.__sbatch_dir, job_parameters['day'], job_parameters['runnumber'])
 
         mkdir(job_parameters['production_dir'])
-        mkdir(job_parameters['log_dir'])
-        mkdir(job_parameters['err_dir'])
+        mkdir(job_parameters['log'])
+        mkdir(job_parameters['err'])
+        mkdir(job_parameters['sbatch'])
+
+        job_parameters['log'] += '/%s.log'%job_parameters['submission_idx']
+        job_parameters['err'] += '/%s.err'%job_parameters['submission_idx']
+        job_parameters['sbatch'] += '/%s.err'%job_parameters['submission_idx']
 
         #pylint: disable-msg=too-many-format-args
         command = 'shifter ./usr/lib64/openmpi-1.10/bin/mpirun --tag-output'
         job_parameters['command'] = '%s -n %i runBfcChainMpi.o 1 %i \"%s\" \"%s\"'.format(command, number_of_cores,
                                                                                           job_parameters['number_of_events'], self.__production_chain, job_parameters['daq_file'])
 
-        job_parameters['sbatch_filename'] = self.__make_sbatch_file(job_parameters)
+        self.__make_sbatch_file(job_parameters)
 
         if self.__submit:
-            output = subprocess.Popen(['sbatch', job_parameters['sbatch_filename']], stdout=subprocess.PIPE).communicate()[0]
+            output = subprocess.Popen(['sbatch', job_parameters['sbatch']], stdout=subprocess.PIPE).communicate()[0]
             jobid = [int(s) for s in output.split() if s.isdigit()]
             job_parameters['slurm_id'] = jobid[0]
 
@@ -92,19 +98,16 @@ class StarSubmitSlurmEngine(object):
         return self.__queue['name'], number_of_cores, estimated_running_time
 
     def __make_sbatch_file(self, job_parameters):
-        """Create production/sbatch/log/err directories and make sbatch file
-
-           return sbatch filename"""
+        """Create production/sbatch/log/err directories and make sbatch file"""
 
         job_scratch = job_parameters['submission_idx']
-        sbatch_filename = '%s/sched%s.sbatch'%(self.__sbatch_dir, job_parameters['submission_idx'])
-        sbatch_file = open(sbatch_filename, 'w')
+        sbatch_file = open(job_parameters['sbatch'], 'w')
         sbatch_file.write('#!/bin/bash'+'\n')
         sbatch_file.write('#SBATCH --image=%s'%self.__shifter_img+'\n')
         sbatch_file.write('#SBATCH --ntasks=%i'%job_parameters['number_of_cores']+'\n')
         sbatch_file.write('#SBATCH --partition=%s'%job_parameters['queue']+'\n')
-        sbatch_file.write('#SBATCH --output=%s/%s.log'%(job_parameters['log_dir'], job_parameters['submission_idx'])+'\n')
-        sbatch_file.write('#SBATCH --error=%s/%s.err'%(job_parameters['err_dir'], job_parameters['submission_idx'])+'\n')
+        sbatch_file.write('#SBATCH --output=%s'%job_parameters['log']+'\n')
+        sbatch_file.write('#SBATCH --error=%s'%job_parameters['err']+'\n')
         sbatch_file.write('#SBATCH --time=%s'%job_parameters['estimated_running_time']+'\n')
         sbatch_file.write('\n')
         sbatch_file.write('#Prepare environment and run job...\n')
@@ -126,5 +129,3 @@ class StarSubmitSlurmEngine(object):
             sbatch_file.write('rm -r -f %s\n'%job_scratch)
 
         sbatch_file.close()
-
-        return sbatch_filename
