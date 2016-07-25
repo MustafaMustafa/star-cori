@@ -1,0 +1,12 @@
+{
+shifter_img: 'mmustafa/sl64_sl16d:pdsf_v3',
+production_chain: 'DbV20160418 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt',
+queue: {'name':'shared', 'max_running_time': 18000, 'max_number_of_cores': 16},
+cputime_per_event: 50, #seconds
+production_dir: './prod',
+stdout_dir: './log',
+stderr_dir: './err',
+sbatch_dir: './sbatch',
+extensions: ['*.MuDst.root', '*.event.root'],
+clean_scratch: True
+}
