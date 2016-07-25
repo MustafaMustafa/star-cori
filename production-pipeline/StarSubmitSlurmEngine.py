@@ -54,7 +54,7 @@ class StarSubmitSlurmEngine(object):
 
         job_parameters['production_dir'] = '%s/%i/%i'%(self.__production_dir, job_parameters['day'], job_parameters['runnumber'])
         job_parameters['log'] = '%s/%i/%i'%(self.__stdout_dir, job_parameters['day'], job_parameters['runnumber'])
-        job_parameters['err'] = '%s/%i/%i'%(self.__stdout_dir, job_parameters['day'], job_parameters['runnumber'])
+        job_parameters['err'] = '%s/%i/%i'%(self.__stderr_dir, job_parameters['day'], job_parameters['runnumber'])
         job_parameters['sbatch'] = '%s/%i/%i'%(self.__sbatch_dir, job_parameters['day'], job_parameters['runnumber'])
 
         mkdir(job_parameters['production_dir'])
@@ -64,7 +64,7 @@ class StarSubmitSlurmEngine(object):
 
         job_parameters['log'] += '/%s.log'%job_parameters['submission_idx']
         job_parameters['err'] += '/%s.err'%job_parameters['submission_idx']
-        job_parameters['sbatch'] += '/%s.err'%job_parameters['submission_idx']
+        job_parameters['sbatch'] += '/%s.sbatch'%job_parameters['submission_idx']
 
         #pylint: disable-msg=too-many-format-args
         command = 'shifter ./usr/lib64/openmpi-1.10/bin/mpirun --tag-output'
@@ -120,7 +120,7 @@ class StarSubmitSlurmEngine(object):
 
         sbatch_file.write('#Copy back output files...\n')
         for ext in self.__production_file_extensions:
-            sbatch_file.write('cp -p %s.%s %s\n'%(job_parameters['base_name'], ext, job_parameters['production_dir']))
+            sbatch_file.write('cp -p %s %s\n'%(ext, job_parameters['production_dir']))
         sbatch_file.write('\n')
 
         if self.__clean_scratch:
