@@ -145,6 +145,7 @@ def heartbeat(hb_coll):
             logger.info("heartbeat: %i files on disk, %i total files seen", entry['total_files_on_disk'], entry['total_files_seen'])
         time.sleep(__global_parameters['heartbeat_interval'])
 
+#pylint: disable-msg=too-many-locals
 def crawl_disk(files_coll):
     """Crawls over the disk and updates the DB"""
 
@@ -162,6 +163,15 @@ def crawl_disk(files_coll):
             db_search = files_coll.find({'basename' : basename})
             if not db_search.count():
                 number_new_files += 1
+
+                with open(os.path.join(dirname, '%s.mrk'%basename), 'r') as f_mrk:
+                    tmp = f_mrk.readlines()
+                    if len(tmp) > 1:
+                        logger.error('Markup file %s.mrk has more than one line skipping ...', filename)
+                    else:
+                        number_of_events = int(tmp[0].rstrip())
+
+
                 path = os.path.join(dirname, filename)
                 timestamp = datetime.datetime.utcfromtimestamp(os.path.getmtime(path))
                 day, runnumber = get_day_and_number(filename)
@@ -169,13 +179,16 @@ def crawl_disk(files_coll):
                        'daq_path' : path,
                        'daq_timestamp' : timestamp,
                        'day': day,
-                       'runnumber': runnumber}
+                       'runnumber': runnumber,
+                       'number_of_submissions': 0,
+                       'number_of_events': number_of_events}
                 files_coll.insert(doc)
 
     __global_parameters['files_stats']['total_files_on_disk'] = number_files_on_disk
     __global_parameters['files_stats']['total_files_seen'] += number_new_files
 
     logger.info("Added %i new daq file(s) to DB", number_new_files)
+#pylint: enable-msg=too-many-locals
 
 def get_day_and_number(baseName):
     """Return day and runnumber"""
