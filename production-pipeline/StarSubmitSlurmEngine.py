@@ -5,6 +5,7 @@ import binascii
 import base64
 import subprocess
 import math
+import time
 import custom_logger
 
 __author__ = "Mustafa Mustafa"
@@ -99,7 +100,7 @@ class StarSubmitSlurmEngine(object):
                          number_of_events, self.__queue['max_number_of_cores'])
             number_of_cores = self.__queue['max_number_of_cores']
 
-        estimated_running_time = math.ceil(float(totaltime)/float(number_of_cores))
+        estimated_running_time = time.strftime('%H:%M:%S', time.gmtime(math.ceil(float(totaltime)/float(number_of_cores))))
 
         return self.__queue['name'], number_of_cores, estimated_running_time
 
