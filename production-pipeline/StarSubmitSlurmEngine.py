@@ -2,6 +2,7 @@
 
 import os
 import binascii
+import base64
 import subprocess
 import math
 import custom_logger
@@ -39,7 +40,7 @@ class StarSubmitSlurmEngine(object):
         self.__sbatch_dir = os.path.abspath(parameters['sbatch_dir'])
         self.__production_file_extensions = parameters['extensions']
         self.__clean_scratch = parameters['clean_scratch']
-        self.__submission_id = binascii.hexlify(os.urandom(16))
+        self.__submission_id = binascii.hexlify(os.urandom(16)).decode('utf-8')
         self.__job_index = -1
 
     def process_job(self, job_parameters):
