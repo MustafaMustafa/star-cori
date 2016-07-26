@@ -1,5 +1,5 @@
 {
-shifter_img: 'mmustafa/sl64_sl16d:pdsf_v3',
+shifter_img: 'mmustafa/sl64_sl16d:v1_pdsf3',
 production_chain: 'DbV20160418 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt',
 queue: {'name':'shared', 'max_running_time': 18000, 'max_number_of_cores': 16},
 cputime_per_event: 50, #seconds
