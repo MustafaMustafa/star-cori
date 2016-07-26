@@ -65,6 +65,8 @@ int main (int argc, char* argv[])
   snprintf(command, sizeof(command), "mkdir %s", pDir);
   system(command);
   chdir(pDir);
+  snprintf(command, sizeof(command), "cp ../runBfcChainMpi.o .", pDir);
+  system(command);
 
   // run BFC chain
   snprintf(command, sizeof(command), "/bin/tcsh -c \"source /usr/local/star/group/templates/cshrc;root4star -l -b -q -x 'bfc.C(%d, %d, \\\"%s\\\", \\\"%s\\\")'\"", firstEventThisProcess, lastEventThisProcess, chain, daqFileName);
