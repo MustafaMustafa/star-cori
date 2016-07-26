@@ -67,7 +67,7 @@ int main (int argc, char* argv[])
   chdir(pDir);
 
   // run BFC chain
-  snprintf(command, sizeof(command), "/bin/tcsh -c \"source /usr/local/star/group/templates/cshrc;root4star -l -b -q -x \'bfc.C(%d, %d, \"%s\", \"%s\", \"%s\")\'\"", firstEventThisProcess, lastEventThisProcess, chain, daqFileName, outFileName);
+  snprintf(command, sizeof(command), "/bin/tcsh -c \"source /usr/local/star/group/templates/cshrc;root4star -l -b -q -x 'bfc.C(%d, %d, \\\"%s\\\", \\\"%s\\\")'\"", firstEventThisProcess, lastEventThisProcess, chain, daqFileName);
   system(command);
 
   // change MuDst file name
