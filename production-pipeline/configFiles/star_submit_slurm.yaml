@@ -7,6 +7,7 @@ production_dir: './prod',
 stdout_dir: './log',
 stderr_dir: './err',
 sbatch_dir: './sbatch',
+mpi_binary: './runBfcChainMpi.o',
 extensions: ['*.MuDst.root', '*.event.root'],
 clean_scratch: True
 }
