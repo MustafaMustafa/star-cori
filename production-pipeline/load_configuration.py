@@ -1,14 +1,19 @@
+"""Utility functions to load configuration files"""
+
 import os
 import sys
 import argparse
 import logging
 import yaml
 
+__author__ = "Mustafa Mustafa"
+__email__ = "mmustafa@lbl.gov"
+
 def load_configuration(configuration_file):
     """Load parameters from configuration file and return dictionary"""
 
     logging.info("-------------------------------------------------------------------------")
-    # open configuration file
+
     if os.path.exists(configuration_file):
         logging.info("Loading configuration file %s", configuration_file)
     else:
