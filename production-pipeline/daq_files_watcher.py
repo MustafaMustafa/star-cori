@@ -6,27 +6,15 @@ import sys
 import os
 import time
 import datetime
-# import threading
 import logging
-import yaml
 from MongoDbUtil import MongoDbUtil
 from StatsHeartbeat import StatsHeartbeat
+from load_configuration import load_configuration
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
 
-# global variables
 # pylint: disable=C0103
-__global_parameters = {'verbose' : False,
-                       'db_server': '',
-                       'db_name': '',
-                       'db_collection': '',
-                       'db_production_files_collection': '',
-                       'daq_files_path' : '',
-                       'crawl_disk_every' : 900,
-                       'heartbeat' : True,
-                       'heartbeat_interval' : 15}
-
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)-15s - %(levelname)s - %(module)s : %(message)s')
 __logger = logging.getLogger(__name__)
 # pylint: enable=C0103
@@ -35,23 +23,23 @@ def main():
     """Daemon to watch for daq files at a specific path and populate the DB """
 
     args = get_args()
-    load_configuration(args.configuration)
+    config = load_configuration(args.configuration)
 
-    database = MongoDbUtil('admin', db_server=__global_parameters['db_server'], db_name=__global_parameters['db_name']).database()
+    database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()
 
     # spawn a stats heartbeat
     accum_stats = {'total_files_seen': 0}
     stats = {'total_files_on_disk': 0}
 
-    stats_heartbeat = StatsHeartbeat(__global_parameters['heartbeat_interval'],
-                                     database[__global_parameters['db_collection']],
-                                     accum_stats, stats, __global_parameters['verbose'])
+    stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
+                                     database[config['db_collection']],
+                                     accum_stats, stats)
     __logger.info("Heartbeat daemon spawned")
 
     # crawl over files
     while True:
-        crawl_disk(database[__global_parameters['db_production_files_collection']], stats_heartbeat.accum_stats, stats_heartbeat.stats)
-        time.sleep(__global_parameters['crawl_disk_every'])
+        crawl_disk(database[config['db_production_files_collection']], config['daq_files_path'], stats_heartbeat.accum_stats, stats_heartbeat.stats)
+        time.sleep(config['crawl_disk_every'])
 
 def get_args():
     """Parses command line arguments """
@@ -67,68 +55,15 @@ def get_args():
         __logger.info("Usage: %s -c configuration.yaml", sys.argv[0])
         exit(1)
 
-    __global_parameters['verbose'] = args.verbose
-
     return args
 
-def load_configuration(configuration_file):
-    """Load parameters from configuration file """
-
-    __logger.info("-------------------------------------------------------------------------")
-    # open configuration file
-    if os.path.exists(configuration_file):
-        __logger.info("Loading configuration file %s", configuration_file)
-    else:
-        __logger.error("Configuration file %s doesn't exist!", configuration_file)
-        exit(1)
-
-    conf_file = file(configuration_file, 'r')
-    parameters = yaml.load(conf_file)
-    conf_file.close()
-
-    # set db parameters
-    set_config_parameter(parameters, 'db_server')
-    set_config_parameter(parameters, 'db_name')
-    set_config_parameter(parameters, 'db_collection')
-    set_config_parameter(parameters, 'db_production_files_collection')
-
-    # set daq files directory path
-    set_config_parameter(parameters, 'daq_files_path')
-
-    if not os.path.isdir(__global_parameters['daq_files_path']):
-        __logger.error("Path %s does not exist or is not a directory!", __global_parameters['daq_files_path'])
-        exit(1)
-
-    # set disk search periodicity
-    set_config_parameter(parameters, 'crawl_disk_every', 'seconds')
-
-    # set heartbeat parameters
-    set_config_parameter(parameters, 'heartbeat')
-    if __global_parameters['heartbeat']:
-        set_config_parameter(parameters, 'heartbeat_interval', 'seconds')
-    else:
-        __logger.info("Heart beat disabled in configuration file")
-
-    __logger.info("Done loading configuration")
-    __logger.info("-------------------------------------------------------------------------")
-
-def set_config_parameter(parameters, parameter_name, units=''):
-    """ To set global parameters if the it exists, exists otherwise """
-
-    if parameter_name in parameters:
-        __global_parameters[parameter_name] = parameters[parameter_name]
-        __logger.info("%s: %s %s", parameter_name, __global_parameters[parameter_name], units)
-    else:
-        __logger.error("%s is not set in the configuration file", parameter_name)
-        exit(1)
-
 #pylint: disable-msg=too-many-locals
-def crawl_disk(files_coll, accum_stats, stats):
+def crawl_disk(files_coll, daqs_path, accum_stats, stats):
     """Crawls over the disk and updates the DB"""
 
     number_files_on_disk = 0
     number_new_files = 0
-    for dirname, _, filenames in os.walk(__global_parameters['daq_files_path']):
+    for dirname, _, filenames in os.walk(daqs_path):
 
         for filename in filenames:
             if filename.find('.daq') < 0:
