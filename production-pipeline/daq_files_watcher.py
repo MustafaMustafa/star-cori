@@ -1,7 +1,6 @@
 #!/bin/usr/python
 """Daemon to watch for daq files at a specific path and populate the DB """
 
-import argparse
 import sys
 import os
 import time
@@ -9,7 +8,9 @@ import datetime
 import logging
 from MongoDbUtil import MongoDbUtil
 from StatsHeartbeat import StatsHeartbeat
+from load_configuration import get_args
 from load_configuration import load_configuration
+
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
@@ -22,7 +23,7 @@ __logger = logging.getLogger(__name__)
 def main():
     """Daemon to watch for daq files at a specific path and populate the DB """
 
-    args = get_args()
+    args = get_args(__doc__)
     config = load_configuration(args.configuration)
 
     database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()
@@ -40,22 +41,6 @@ def main():
     while True:
         crawl_disk(database[config['db_production_files_collection']], config['daq_files_path'], stats_heartbeat.accum_stats, stats_heartbeat.stats)
         time.sleep(config['crawl_disk_every'])
-
-def get_args():
-    """Parses command line arguments """
-    parser = argparse.ArgumentParser(description="Daemon to watch for daq files at a specific path and populate the DB")
-    required = parser.add_argument_group('required arguments')
-    required.add_argument('-c', '--configuration', help='configuration file', action='store', type=str)
-    parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true', default=False)
-
-    args = parser.parse_args()
-
-    if not args.configuration:
-        __logger.error("Need configuration file")
-        __logger.info("Usage: %s -c configuration.yaml", sys.argv[0])
-        exit(1)
-
-    return args
 
 #pylint: disable-msg=too-many-locals
 def crawl_disk(files_coll, daqs_path, accum_stats, stats):
