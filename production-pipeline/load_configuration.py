@@ -20,7 +20,7 @@ def load_configuration(configuration_file):
         logging.error("Configuration file %s doesn't exist!", configuration_file)
         exit(1)
 
-    conf_file = file(configuration_file, 'r')
+    conf_file = open(configuration_file, 'r')
     parameters = yaml.load(conf_file)
     conf_file.close()
 
