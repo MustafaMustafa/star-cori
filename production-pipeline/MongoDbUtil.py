@@ -6,7 +6,7 @@ import os
 import pymongo
 import base64
 from pymongo import MongoClient
-import custom_logger
+import logging
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
@@ -17,7 +17,7 @@ class MongoDbUtil(object):
        m = mongoDbUtil('admin')
        coll = m.db['myCollection']"""
 
-    __logger = custom_logger.get_logger(__name__)
+    __logger = logging.getLogger()
 
     def __init__(self, user='readOnly', db_name='STARProdState', db_server='mongodb01.nersc.gov'):
 
@@ -29,7 +29,7 @@ class MongoDbUtil(object):
             self.__password = os.getenv('STARProdState_ro_pass', 'FALSE')
 
         if self.__password == 'FALSE':
-            self.__logger.error("Password for user %s is not available", self.__user)
+            logging.error("Password for user %s is not available", self.__user)
             exit(1)
 
         self.__db_name = db_name
