@@ -20,10 +20,16 @@ __logger = logging.getLogger(__name__)
 # pylint: enable=C0103
 
 def main():
-    """Daemon to watch for daq files at a specific path and populate the DB """
+    """To be used in CLI mode"""
 
     args = load_configuration.get_args(__doc__)
-    config = load_configuration.load_configuration(args.configuration)
+
+    daq_files_watcher(args.configuration)
+
+def daq_files_watcher(config_file):
+    """Daemon to watch for daq files at a specific path and populate the DB """
+
+    config = load_configuration.load_configuration(config_file)
     config = load_configuration.affix_production_tag(config, ['db_collection', 'db_production_files_collection'])
 
     database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()

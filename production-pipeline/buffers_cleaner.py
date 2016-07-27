@@ -17,10 +17,16 @@ __logger = logging.getLogger(__name__)
 # pylint: enable=C0103
 
 def main():
-    """Daemon to clean pipline input and ouput buffers"""
+    """To be used in CLI mode"""
 
     args = load_configuration.get_args(__doc__)
-    config = load_configuration.load_configuration(args.configuration)
+
+    buffers_cleaner(args.configuration)
+
+def buffers_cleaner(config_file):
+    """Daemon to clean pipline input and ouput buffers"""
+
+    config = load_configuration.load_configuration(config_file)
     config = load_configuration.affix_production_tag(config, ['db_collection', 'db_production_files_collection'])
 
     database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()
@@ -36,5 +42,6 @@ def main():
 
     while True:
         time.sleep(config['recheck_sleep_interval'])
+
 if __name__ == '__main__':
     main()
