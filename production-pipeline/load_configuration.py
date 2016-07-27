@@ -51,3 +51,11 @@ def get_args(brief):
         exit(1)
 
     return args
+
+def affix_production_tag(parameters, collections):
+    """Affix production tag to db collections"""
+
+    for coll in collections:
+        parameters[coll] = '%s_%s'%(parameters[coll], parameters['production_tag'])
+
+    return parameters
