@@ -1,8 +1,9 @@
 {
 db_server: 'mongodb01.nersc.gov',
 db_name: 'STARProdState',
-db_collection: 'buffers_clearner_Pxxid',
-db_production_files_collection: 'production_files_Pxxid',
+db_collection: 'buffers_clearner',
+db_production_files_collection: 'production_files',
+production_tag: 'Pxxid',
 heartbeat: True,
 heartbeat_interval: 13, #seconds
 recheck_sleep_interval: 60 #seconds

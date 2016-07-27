@@ -4,10 +4,9 @@
 import sys
 import time
 import logging
+import load_configuration
 from MongoDbUtil import MongoDbUtil
 from StatsHeartbeat import StatsHeartbeat
-from load_configuration import get_args
-from load_configuration import load_configuration
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
@@ -20,8 +19,9 @@ __logger = logging.getLogger(__name__)
 def main():
     """Daemon to clean pipline input and ouput buffers"""
 
-    args = get_args(__doc__)
-    config = load_configuration(args.configuration)
+    args = load_configuration.get_args(__doc__)
+    config = load_configuration.load_configuration(args.configuration)
+    config = load_configuration.affix_production_tag(config, ['db_collection', 'db_production_files_collection'])
 
     database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()
 
