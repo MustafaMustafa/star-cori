@@ -1,4 +1,6 @@
 import os
+import sys
+import argparse
 import logging
 import yaml
 
@@ -24,14 +26,23 @@ def load_configuration(configuration_file):
                 logging.error("Path %s does not exist or is not a directory!", parameters[key])
                 exit(1)
 
-    # set heartbeat parameters
-    # set_config_parameter(parameters, 'heartbeat')
-    # if __global_parameters['heartbeat']:
-    #     set_config_parameter(parameters, 'heartbeat_interval', 'seconds')
-    # else:
-    #     __logger.info("Heart beat disabled in configuration file")
-    #
     logging.info("Done loading configuration")
     logging.info("-------------------------------------------------------------------------")
 
     return parameters
+
+def get_args(brief):
+    """Parses command line arguments """
+    parser = argparse.ArgumentParser(description=brief)
+    required = parser.add_argument_group('required arguments')
+    required.add_argument('-c', '--configuration', help='configuration file', action='store', type=str)
+    parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true', default=False)
+
+    args = parser.parse_args()
+
+    if not args.configuration:
+        logging.error("Need configuration file")
+        logging.info("Usage: %s -c configuration.yaml", sys.argv[0])
+        exit(1)
+
+    return args
