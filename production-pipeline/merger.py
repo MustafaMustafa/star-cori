@@ -18,7 +18,7 @@ __logger = logging.getLogger(__name__)
 # pylint: enable=C0103
 
 def main():
-    """Daemon to watch jobs in slurm queue and validate output of completed jobs"""
+    """Daemon to merge output files (MuDst/PicoDst)"""
 
     args = get_args(__doc__)
     config = load_configuration(args.configuration)
