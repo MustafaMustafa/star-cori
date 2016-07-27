@@ -6,10 +6,11 @@ import sys
 import os
 import time
 import datetime
-import threading
+# import threading
 import logging
 import yaml
 from MongoDbUtil import MongoDbUtil
+from StatsHeartbeat import StatsHeartbeat
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
@@ -24,8 +25,7 @@ __global_parameters = {'verbose' : False,
                        'daq_files_path' : '',
                        'crawl_disk_every' : 900,
                        'heartbeat' : True,
-                       'heartbeat_interval' : 15,
-                       'files_stats' : {}}
+                       'heartbeat_interval' : 15}
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)-15s - %(levelname)s - %(module)s : %(message)s')
 __logger = logging.getLogger(__name__)
@@ -38,16 +38,19 @@ def main():
     load_configuration(args.configuration)
 
     database = MongoDbUtil('admin', db_server=__global_parameters['db_server'], db_name=__global_parameters['db_name']).database()
-    init_stats(database[__global_parameters['db_collection']])
 
-    if __global_parameters['heartbeat']:
-        heartbeat_thread = threading.Thread(target=heartbeat, args=(database[__global_parameters['db_collection']],))
-        heartbeat_thread.setDaemon(True)
-        heartbeat_thread.start()
-        __logger.info("Heartbeat daemon spawned")
+    # spawn a stats heartbeat
+    accum_stats = {'total_files_seen': 0}
+    stats = {'total_files_on_disk': 0}
 
+    stats_heartbeat = StatsHeartbeat(__global_parameters['heartbeat_interval'],
+                                     database[__global_parameters['db_collection']],
+                                     accum_stats, stats, __global_parameters['verbose'])
+    __logger.info("Heartbeat daemon spawned")
+
+    # crawl over files
     while True:
-        crawl_disk(database[__global_parameters['db_production_files_collection']])
+        crawl_disk(database[__global_parameters['db_production_files_collection']], stats_heartbeat.accum_stats, stats_heartbeat.stats)
         time.sleep(__global_parameters['crawl_disk_every'])
 
 def get_args():
@@ -119,36 +122,8 @@ def set_config_parameter(parameters, parameter_name, units=''):
         __logger.error("%s is not set in the configuration file", parameter_name)
         exit(1)
 
-def init_stats(hearbeat_coll):
-    """Intialize stats from DB latest record"""
-
-    __logger.info("Initializing variables from DB ...")
-    if hearbeat_coll.count():
-        last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
-        __global_parameters['files_stats']['total_files_on_disk'] = last_doc['total_files_on_disk']
-        __global_parameters['files_stats']['total_files_seen'] = last_doc['total_files_seen']
-    else:
-        __global_parameters['files_stats']['total_files_on_disk'] = 0
-        __global_parameters['files_stats']['total_files_seen'] = 0
-
-    __logger.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['total_files_on_disk'])
-    __logger.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['total_files_seen'])
-
-
-def heartbeat(hb_coll):
-    """Send a heartbeat to DB """
-
-    while __global_parameters['heartbeat']:
-        entry = {'total_files_on_disk': __global_parameters['files_stats']['total_files_on_disk'],
-                 'total_files_seen' : __global_parameters['files_stats']['total_files_seen'],
-                 'date' : datetime.datetime.utcnow()}
-        hb_coll.insert(entry)
-        if __global_parameters['verbose']:
-            __logger.info("heartbeat: %i files on disk, %i total files seen", entry['total_files_on_disk'], entry['total_files_seen'])
-        time.sleep(__global_parameters['heartbeat_interval'])
-
 #pylint: disable-msg=too-many-locals
-def crawl_disk(files_coll):
+def crawl_disk(files_coll, accum_stats, stats):
     """Crawls over the disk and updates the DB"""
 
     number_files_on_disk = 0
@@ -186,8 +161,8 @@ def crawl_disk(files_coll):
                        'number_of_events': number_of_events}
                 files_coll.insert(doc)
 
-    __global_parameters['files_stats']['total_files_on_disk'] = number_files_on_disk
-    __global_parameters['files_stats']['total_files_seen'] += number_new_files
+    accum_stats['total_files_seen'] = accum_stats['total_files_seen'] + number_new_files
+    stats['total_files_on_disk'] = number_files_on_disk
 
     __logger.info("Added %i new daq file(s) to DB", number_new_files)
 #pylint: enable-msg=too-many-locals
