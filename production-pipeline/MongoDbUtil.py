@@ -3,10 +3,10 @@ Utility class to handle connections to mongoDb and fetching collections
 """
 
 import os
-import pymongo
 import base64
-from pymongo import MongoClient
 import logging
+import pymongo
+from pymongo import MongoClient
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
