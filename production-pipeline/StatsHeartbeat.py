@@ -21,7 +21,6 @@ class StatsHeartbeat(object):
         self.__beat_your_heart = True
 
         self.__init_stats()
-        time.sleep(self.__heartbeat_interval)
 
         heartbeat_thread = threading.Thread(target=self.__heartbeat)
         heartbeat_thread.setDaemon(True)
@@ -44,6 +43,7 @@ class StatsHeartbeat(object):
     def __heartbeat(self):
         """Send a heartbeat to DB """
 
+        time.sleep(self.__heartbeat_interval)
         while self.__beat_your_heart:
             entry = {'accum_stats': self.accum_stats,
                      'stats': self.stats,
