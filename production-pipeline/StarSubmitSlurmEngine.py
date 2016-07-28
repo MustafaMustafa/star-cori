@@ -2,20 +2,14 @@
 
 import os
 import binascii
-import base64
 import subprocess
 import math
 import time
-import custom_logger
+import logging
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
 
-
-# global variables
-# pylint: disable=C0103
-logger = custom_logger.get_logger(__name__)
-# pylint: enable=C0103
 
 def mkdir(dirname):
     """mkdir if directory doesn't exist"""
@@ -96,7 +90,7 @@ class StarSubmitSlurmEngine(object):
         number_of_cores = math.ceil(float(totaltime)/float(self.__queue['max_running_time']))
 
         if number_of_cores > self.__queue['max_number_of_cores']:
-            logger.error('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
+            logging.error('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
                          number_of_events, self.__queue['max_number_of_cores'])
             number_of_cores = self.__queue['max_number_of_cores']
 
