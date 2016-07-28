@@ -39,7 +39,7 @@ def main():
         job_parameters = star_submit_engine.process_job(job_parameters)
 
         if args.submit:
-            logger.info("Submitted job %i", job_parameters['slurm_id'])
+            logger.info("Submitted batch job %i", job_parameters['slurm_id'])
 
     # with open('%s/%s.daqSplit.yaml'%(log_dir, base_name), 'w') as outfile:
         # yaml.dump(job_parameters, outfile)
