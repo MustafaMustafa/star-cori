@@ -1,158 +1,60 @@
 #!/bin/usr/python
 """Daemon to watch for daq files at a specific path and populate the DB """
 
-import argparse
 import sys
 import os
 import time
 import datetime
-import threading
-import yaml
+import logging
+import load_configuration
 from MongoDbUtil import MongoDbUtil
-import custom_logger
+from StatsHeartbeat import StatsHeartbeat
+
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
 
-# global variables
 # pylint: disable=C0103
-__global_parameters = {'verbose' : False,
-                       'db_server': '',
-                       'db_name': '',
-                       'db_collection': '',
-                       'db_production_files_collection': '',
-                       'daq_files_path' : '',
-                       'crawl_disk_every' : 900,
-                       'heartbeat' : True,
-                       'heartbeat_interval' : 15,
-                       'files_stats' : {}}
-
-logger = custom_logger.get_logger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)-15s - %(levelname)s - %(module)s : %(message)s')
+__logger = logging.getLogger(__name__)
 # pylint: enable=C0103
 
 def main():
+    """To be used in CLI mode"""
+
+    args = load_configuration.get_args(__doc__)
+
+    daq_files_watcher(args.configuration)
+
+def daq_files_watcher(config_file):
     """Daemon to watch for daq files at a specific path and populate the DB """
 
-    args = get_args()
-    load_configuration(args.configuration)
+    config = load_configuration.load_configuration(config_file)
+    config = load_configuration.affix_production_tag(config, ['db_collection', 'db_production_files_collection'])
 
-    database = MongoDbUtil('admin', db_server=__global_parameters['db_server'], db_name=__global_parameters['db_name']).database()
-    init_stats(database[__global_parameters['db_collection']])
+    database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()
 
-    if __global_parameters['heartbeat']:
-        heartbeat_thread = threading.Thread(target=heartbeat, args=(database[__global_parameters['db_collection']],))
-        heartbeat_thread.setDaemon(True)
-        heartbeat_thread.start()
-        logger.info("Heartbeat daemon spawned")
+    # spawn a stats heartbeat
+    accum_stats = {'total_files_seen': 0}
+    stats = {'total_files_on_disk': 0}
 
+    stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
+                                     database[config['db_collection']],
+                                     accum_stats, stats)
+    __logger.info("Heartbeat daemon spawned")
+
+    # crawl over files
     while True:
-        crawl_disk(database[__global_parameters['db_production_files_collection']])
-        time.sleep(__global_parameters['crawl_disk_every'])
-
-def get_args():
-    """Parses command line arguments """
-    parser = argparse.ArgumentParser(description="Daemon to watch for daq files at a specific path and populate the DB")
-    required = parser.add_argument_group('required arguments')
-    required.add_argument('-c', '--configuration', help='configuration file', action='store', type=str)
-    parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true', default=False)
-
-    args = parser.parse_args()
-
-    if not args.configuration:
-        logger.error("Need configuration file")
-        logger.info("Usage: %s -c configuration.yaml", sys.argv[0])
-        exit(1)
-
-    __global_parameters['verbose'] = args.verbose
-
-    return args
-
-def load_configuration(configuration_file):
-    """Load parameters from configuration file """
-
-    logger.info("-------------------------------------------------------------------------")
-    # open configuration file
-    if os.path.exists(configuration_file):
-        logger.info("Loading configuration file %s", configuration_file)
-    else:
-        logger.error("Configuration file %s doesn't exist!", configuration_file)
-        exit(1)
-
-    conf_file = file(configuration_file, 'r')
-    parameters = yaml.load(conf_file)
-    conf_file.close()
-
-    # set db parameters
-    set_config_parameter(parameters, 'db_server')
-    set_config_parameter(parameters, 'db_name')
-    set_config_parameter(parameters, 'db_collection')
-    set_config_parameter(parameters, 'db_production_files_collection')
-
-    # set daq files directory path
-    set_config_parameter(parameters, 'daq_files_path')
-
-    if not os.path.isdir(__global_parameters['daq_files_path']):
-        logger.error("Path %s does not exist or is not a directory!", __global_parameters['daq_files_path'])
-        exit(1)
-
-    # set disk search periodicity
-    set_config_parameter(parameters, 'crawl_disk_every', 'seconds')
-
-    # set heartbeat parameters
-    set_config_parameter(parameters, 'heartbeat')
-    if __global_parameters['heartbeat']:
-        set_config_parameter(parameters, 'heartbeat_interval', 'seconds')
-    else:
-        logger.info("Heart beat disabled in configuration file")
-
-    logger.info("Done loading configuration")
-    logger.info("-------------------------------------------------------------------------")
-
-def set_config_parameter(parameters, parameter_name, units=''):
-    """ To set global parameters if the it exists, exists otherwise """
-
-    if parameter_name in parameters:
-        __global_parameters[parameter_name] = parameters[parameter_name]
-        logger.info("%s: %s %s", parameter_name, __global_parameters[parameter_name], units)
-    else:
-        logger.error("%s is not set in the configuration file", parameter_name)
-        exit(1)
-
-def init_stats(hearbeat_coll):
-    """Intialize stats from DB latest record"""
-
-    logger.info("Initializing variables from DB ...")
-    if hearbeat_coll.count():
-        last_doc = hearbeat_coll.find().skip(hearbeat_coll.count()-1)[0]
-        __global_parameters['files_stats']['total_files_on_disk'] = last_doc['total_files_on_disk']
-        __global_parameters['files_stats']['total_files_seen'] = last_doc['total_files_seen']
-    else:
-        __global_parameters['files_stats']['total_files_on_disk'] = 0
-        __global_parameters['files_stats']['total_files_seen'] = 0
-
-    logger.info("Number of files on disk according to DB = %i", __global_parameters['files_stats']['total_files_on_disk'])
-    logger.info("Number of files ever seen according to DB = %i", __global_parameters['files_stats']['total_files_seen'])
-
-
-def heartbeat(hb_coll):
-    """Send a heartbeat to DB """
-
-    while __global_parameters['heartbeat']:
-        entry = {'total_files_on_disk': __global_parameters['files_stats']['total_files_on_disk'],
-                 'total_files_seen' : __global_parameters['files_stats']['total_files_seen'],
-                 'date' : datetime.datetime.utcnow()}
-        hb_coll.insert(entry)
-        if __global_parameters['verbose']:
-            logger.info("heartbeat: %i files on disk, %i total files seen", entry['total_files_on_disk'], entry['total_files_seen'])
-        time.sleep(__global_parameters['heartbeat_interval'])
+        crawl_disk(database[config['db_production_files_collection']], config['daq_files_path'], stats_heartbeat.accum_stats, stats_heartbeat.stats)
+        time.sleep(config['crawl_disk_every'])
 
 #pylint: disable-msg=too-many-locals
-def crawl_disk(files_coll):
+def crawl_disk(files_coll, daqs_path, accum_stats, stats):
     """Crawls over the disk and updates the DB"""
 
     number_files_on_disk = 0
     number_new_files = 0
-    for dirname, _, filenames in os.walk(__global_parameters['daq_files_path']):
+    for dirname, _, filenames in os.walk(daqs_path):
 
         for filename in filenames:
             if filename.find('.daq') < 0:
@@ -168,7 +70,7 @@ def crawl_disk(files_coll):
                 with open(os.path.join(dirname, '%s.mrk'%basename), 'r') as f_mrk:
                     tmp = f_mrk.readlines()
                     if len(tmp) > 1:
-                        logger.error('Markup file %s.mrk has more than one line skipping ...', filename)
+                        __logger.error('Markup file %s.mrk has more than one line skipping ...', filename)
                     else:
                         number_of_events = int(tmp[0].rstrip())
 
@@ -185,10 +87,10 @@ def crawl_disk(files_coll):
                        'number_of_events': number_of_events}
                 files_coll.insert(doc)
 
-    __global_parameters['files_stats']['total_files_on_disk'] = number_files_on_disk
-    __global_parameters['files_stats']['total_files_seen'] += number_new_files
+    accum_stats['total_files_seen'] = accum_stats['total_files_seen'] + number_new_files
+    stats['total_files_on_disk'] = number_files_on_disk
 
-    logger.info("Added %i new daq file(s) to DB", number_new_files)
+    __logger.info("Added %i new daq file(s) to DB", number_new_files)
 #pylint: enable-msg=too-many-locals
 
 def get_day_and_number(basename):
