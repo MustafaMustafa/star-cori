@@ -65,7 +65,7 @@ int main (int argc, char* argv[])
   snprintf(command, sizeof(command), "mkdir %s", pDir);
   system(command);
   chdir(pDir);
-  snprintf(command, sizeof(command), "cp ../runBfcChainMpi.o .", pDir);
+  snprintf(command, sizeof(command), "cp ../runBfcChainMpi.o .");
   system(command);
 
   // run BFC chain
@@ -75,7 +75,7 @@ int main (int argc, char* argv[])
   // change MuDst file name
   char muDstFileName[FileNameArraySize];
   getMuDstFileName(baseName, muDstFileName);
-  snprintf(command, sizeof(command), "mv %s %s", muDstFileName, outFileName);
+  snprintf(command, sizeof(command), "mv %s ../%s", muDstFileName, outFileName);
   system(command);
 
   MPI_Finalize();
