@@ -73,7 +73,7 @@ def override_daemons_configs(config):
             yml['production_tag'] = config['production_tag']
 
             with open(daemon_yml, 'w') as tmpf:
-                yaml.dump(yml, tmpf)
+                yaml.dump(yml, tmpf, default_flow_style=False, canonical=False, width=200)
         else:
             logging.error("Configuration file %s doesn't exist!", daemon_yml)
             exit(1)
