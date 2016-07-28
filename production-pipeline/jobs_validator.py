@@ -33,7 +33,7 @@ def jobs_validator(config_file):
 
     # spawn a stats heartbeat
     accum_stats = {'completed': 0, 'failed': 0}
-    stats = {'running': 0, 'pending': 0, 'resubmitted': 0}
+    stats = {'total_in_queue': 0, 'running': 0, 'pending': 0, 'failed': 0}
 
     stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
                                      database[config['db_collection']],
