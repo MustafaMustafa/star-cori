@@ -4,16 +4,17 @@
 import os
 import sys
 import argparse
+import logging
 import yaml
 from StarSubmitSlurmEngine import StarSubmitSlurmEngine
-import custom_logger
 
 __author__ = "Mustafa Mustafa"
 __email__ = "mmustafa@lbl.gov"
 
 # global variables
 # pylint: disable=C0103
-logger = custom_logger.get_logger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(asctime)-15s - %(levelname)s - %(module)s : %(message)s')
+logger = logging.getLogger(__name__)
 # pylint: enable=C0103
 
 def main():
