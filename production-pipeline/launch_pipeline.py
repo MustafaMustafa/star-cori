@@ -29,7 +29,7 @@ def main():
     for daemon in config['daemons_configs']:
         config['daemons_configs'][daemon] = os.path.join(config['config_files_dir'], config['daemons_configs'][daemon])
 
-    update_production_tag(config)
+    override_daemons_configs(config)
 
     # spwan workers
     workers = {'daq_files_watcher': daq_files_watcher,
@@ -56,7 +56,7 @@ def main():
     while True:
         time.sleep(1e4)
 
-def update_production_tag(config):
+def override_daemons_configs(config):
     """Update production tag in daemons yaml files"""
 
     logging.info("Updating production tag in all daemons configuration files...")
@@ -68,6 +68,8 @@ def update_production_tag(config):
             with open(daemon_yml, 'r') as tmpf:
                 yml = yaml.load(tmpf)
 
+            yml['heartbeat'] = config['heartbeat']
+            yml['heartbeat_interval'] = config['heartbeat_interval']
             yml['production_tag'] = config['production_tag']
 
             with open(daemon_yml, 'w') as tmpf:

@@ -1,5 +1,7 @@
 {
   production_tag: 'Pxxid',
+  heartbeat: True,
+  heartbeat_interval: 30,
   config_files_dir: '/home/mustafa/research/star-cori/production-pipeline/configFiles',
   daemons_configs: {'daq_files_watcher' : 'daq_files_watcher.yaml',
                     'submitter': 'submitter.yaml',
