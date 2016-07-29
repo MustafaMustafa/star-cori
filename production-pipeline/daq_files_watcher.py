@@ -83,7 +83,8 @@ def crawl_disk(files_coll, daqs_path, accum_stats, stats):
                        'daq_timestamp' : timestamp,
                        'day': day,
                        'runnumber': runnumber,
-                       'number_of_submissions': 0,
+                       'submitted': 0,
+                       'failed': 0,
                        'number_of_events': number_of_events}
                 files_coll.insert(doc)
 
