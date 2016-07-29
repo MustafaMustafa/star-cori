@@ -1,4 +1,4 @@
-db_collection: buffers_clearner
+db_collection: buffers_cleaner
 db_name: STARProdState
 db_production_files_collection: production_files
 db_server: mongodb01.nersc.gov
