@@ -3,10 +3,12 @@
   heartbeat: True,
   heartbeat_interval: 30,
   config_files_dir: '/home/mustafa/research/star-cori/production-pipeline/configFiles',
+  daemons_to_launch: ['daq_files_watcher', 'buffers_cleaner',
+                      'jobs_validator', 'submitter', 'merger'],
   daemons_configs: {'daq_files_watcher' : 'daq_files_watcher.yaml',
                     'submitter': 'submitter.yaml',
                     'jobs_validator': 'jobs_validator.yaml',
                     'merger': 'merger.yaml',
                     'buffers_cleaner': 'buffers_cleaner.yaml'},
-  interval_between_workers: 10
+  interval_between_workers: 30
 }

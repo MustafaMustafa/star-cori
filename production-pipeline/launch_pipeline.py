@@ -38,13 +38,13 @@ def main():
                'merger': merger,
                'buffers_cleaner': buffers_cleaner}
 
-    for daemon, daemon_config in config['daemons_configs'].iteritems():
+    for daemon in config['daemons_to_launch']:
         if daemon not in workers:
             logging.error("%s no such daemon exists", daemon)
             continue
 
         logging.info("Spawning %s daemon...", daemon)
-        thread = threading.Thread(target=workers[daemon], args=(daemon_config,))
+        thread = threading.Thread(target=workers[daemon], args=(config['daemons_configs'][daemon],))
         thread.setDaemon(True)
         thread.start()
 
