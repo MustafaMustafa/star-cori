@@ -1,4 +1,3 @@
-#!/bin/usr/python
 """A class for a hearbeat daemon that updates the DB with stats on every beat"""
 
 import threading
