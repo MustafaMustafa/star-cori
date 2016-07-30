@@ -9,7 +9,7 @@ def get_queued_jobs(user):
     """Returns a dictionary of user slurm jobs"""
 
     f_squeue = open('squeue.tmp', 'w')
-    subprocess.Popen(['squeue', '--user', user], stdout=f_squeue).wait()
+    subprocess.Popen(['squeue', '-o', '%.18i %.15T', '--user', user], stdout=f_squeue).wait()
     f_squeue.close()
 
     jobs = {}
@@ -20,7 +20,7 @@ def get_queued_jobs(user):
         if parts[0] == 'JOBID':
             continue
         else:
-            jobs[parts[0]] = parts[-2]
+            jobs[parts[0]] = parts[1]
 
     f_squeue.close()
     return jobs
