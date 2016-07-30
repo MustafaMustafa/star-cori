@@ -9,7 +9,7 @@ def get_queued_jobs(user):
     """Returns a dictionary of user slurm jobs"""
 
     f_squeue = open('squeue.tmp', 'w')
-    subprocess.Popen(['squeue', '--user', user], stdout=f_squeue)
+    subprocess.Popen(['squeue', '--user', user], stdout=f_squeue).wait()
     f_squeue.close()
 
     jobs = {}
