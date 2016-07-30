@@ -63,7 +63,7 @@ def submitter(config_file):
             if empty_job_slots:
                 updated_daq = star_submit_engine.process_job(daq)
                 updated_daq['submitted'] += 1
-                updated_daq['status'] = 'queued'
+                updated_daq['status'] = 'PENDING'
 
                 stats['submitted'] += 1
                 accum_stats['ever_submitted'] += 1
