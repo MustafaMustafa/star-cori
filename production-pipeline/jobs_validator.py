@@ -5,6 +5,7 @@ import sys
 import time
 import logging
 import load_configuration
+import slurm_utility
 from MongoDbUtil import MongoDbUtil
 from StatsHeartbeat import StatsHeartbeat
 
@@ -40,7 +41,12 @@ def jobs_validator(config_file):
                                      accum_stats, stats)
     logging.info("Heartbeat daemon spawned")
 
+    # loop over queued jobs and update status
+    files_coll = database[config['db_production_files_collection']]
+
     while True:
+        for job in files_coll.find({'$or': [{'status': 'queued'}, {'status': 'running'}]}):
+            pass
         time.sleep(config['recheck_sleep_interval'])
 
 if __name__ == '__main__':

@@ -6,3 +6,4 @@ heartbeat: true
 heartbeat_interval: 30
 production_tag: Pxxid
 recheck_sleep_interval: 60
+slurm_user: mustafa
