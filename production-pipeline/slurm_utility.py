@@ -20,7 +20,7 @@ def get_queued_jobs(user):
         if parts[0] == 'JOBID':
             continue
         else:
-            jobs[parts[0]] = parts[1]
+            jobs[int(parts[0].split('.')[0])] = parts[1]
 
     f_squeue.close()
     return jobs
