@@ -118,11 +118,22 @@ class StarSubmitSlurmEngine(object):
         sbatch_file.write('cd  %s\n'%job_scratch)
         sbatch_file.write('cp %s .'%self.__mpi_binary+'\n')
         sbatch_file.write('%s\n'%job_parameters['command'])
+
+        if 'MuDst.root' in self.__production_file_extensions:
+            sbatch_file.write('\n#Merge MuDst files...\n')
+            sbatch_file.write('ls *.MuDst.root > tmp.MuDst.list\n')
+            sbatch_file.write('sort tmp.MuDst.list -o tmp.MuDst.list\n')
+            sbatch_file.write('wait\n')
+            sbatch_file.write('shifter /bin/csh -c \"source /usr/local/star/group/templates/cshrc; hadd %s.MuDst.root @tmp.MuDst.list\"'%job_parameters['basename']+'\n')
+            sbatch_file.write('wait\n')
         sbatch_file.write('\n')
 
         sbatch_file.write('#Copy back output files...\n')
         for ext in self.__production_file_extensions:
-            sbatch_file.write('cp -p %s %s\n'%(ext, job_parameters['production_dir']))
+            if ext == 'MuDst.root':
+                sbatch_file.write('cp -p %s.%s %s\n'%(job_parameters['basename'], ext, job_parameters['production_dir']))
+            else:
+                sbatch_file.write('cp -p *.%s %s\n'%(ext, job_parameters['production_dir']))
         sbatch_file.write('\n')
 
         if self.__clean_scratch:

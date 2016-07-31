@@ -33,7 +33,6 @@ def main():
 
     # spwan workers
     workers = {'jobs_validator': jobs_validator,
-               'merger': merger,
                'buffers_cleaner': buffers_cleaner,
                'daq_files_watcher': daq_files_watcher,
                'submitter': submitter}

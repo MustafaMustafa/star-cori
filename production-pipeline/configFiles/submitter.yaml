@@ -6,7 +6,7 @@ db_name: STARProdState
 db_production_files_collection: production_files
 db_server: mongodb01.nersc.gov
 extensions:
-- '*.MuDst.root'
+- 'MuDst.root'
 heartbeat: true
 heartbeat_interval: 30
 max_jobs_in_queue: 100
