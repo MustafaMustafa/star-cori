@@ -7,7 +7,7 @@
  
 void getBaseFileName(char* fileName, char* baseName);
 void getMuDstFileName(char* baseName, char* outFileName);
-void getOutFileName(char* baseName, char* outFileName, int starEvt, int endEvt);
+void getOutFileName(char* baseName, char* outFileName, int rank, int starEvt, int endEvt);
 
 #define FileNameArraySize 200
 
@@ -49,7 +49,7 @@ int main (int argc, char* argv[])
   char baseName[FileNameArraySize] = "";
   char outFileName[FileNameArraySize] = "";
   getBaseFileName(daqFileName, baseName);
-  getOutFileName(baseName, outFileName, firstEventThisProcess, lastEventThisProcess);
+  getOutFileName(baseName, outFileName, rank, firstEventThisProcess, lastEventThisProcess);
 
   printf("%-20s = %s\n", "Daq file", daqFileName);
   printf("%-20s = %-10d\n", "Number of processes", nProcesses);
@@ -91,10 +91,10 @@ void getBaseFileName(char* fileName, char* baseName)
 
 void getMuDstFileName(char* baseName, char* outFileName)
 {
-  getOutFileName(baseName, outFileName, -1, -1);
+  getOutFileName(baseName, outFileName, -1, -1, -1);
 }
 
-void getOutFileName(char* baseName, char* outFileName, int const startEvt, int const endEvt)
+void getOutFileName(char* baseName, char* outFileName, int const rank, int const startEvt, int const endEvt)
 {
   if(startEvt == -1)
   {
@@ -102,6 +102,6 @@ void getOutFileName(char* baseName, char* outFileName, int const startEvt, int c
   }
   else
   {
-    snprintf(outFileName, FileNameArraySize, "%s.SubEvts_%d_%d.MuDst.root", baseName, startEvt, endEvt);
+    snprintf(outFileName, FileNameArraySize, "%s.%d.SubEvts_%d_%d.MuDst.root", baseName, rank, startEvt, endEvt);
   }
 }
