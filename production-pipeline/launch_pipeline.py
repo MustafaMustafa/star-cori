@@ -32,11 +32,11 @@ def main():
     override_daemons_configs(config)
 
     # spwan workers
-    workers = {'daq_files_watcher': daq_files_watcher,
-               'submitter': submitter,
-               'jobs_validator': jobs_validator,
+    workers = {'jobs_validator': jobs_validator,
                'merger': merger,
-               'buffers_cleaner': buffers_cleaner}
+               'buffers_cleaner': buffers_cleaner,
+               'daq_files_watcher': daq_files_watcher,
+               'submitter': submitter}
 
     for daemon in config['daemons_to_launch']:
         if daemon not in workers:
