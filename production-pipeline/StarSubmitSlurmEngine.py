@@ -77,7 +77,7 @@ class StarSubmitSlurmEngine(object):
         if self.__submit:
             output = subprocess.Popen(['sbatch', job_parameters['sbatch']], stdout=subprocess.PIPE).communicate()[0]
             jobid = [int(s) for s in output.split() if s.isdigit()]
-            job_parameters['slurm_id'] = jobid[0]
+            job_parameters['slurm_id'] = int(jobid[0])
 
         return job_parameters
 
