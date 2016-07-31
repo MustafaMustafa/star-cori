@@ -12,6 +12,7 @@ heartbeat_interval: 30
 max_jobs_in_queue: 100
 max_resubmissions: 7
 mpi_binary: ./runBfcChainMpi.o
+qa_macro: ./checkProduction.C
 production_chain: DbV20160418 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt
 production_dir: ./prod
 production_tag: Pxxid

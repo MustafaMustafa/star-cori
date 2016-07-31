@@ -8,6 +8,7 @@ stdout_dir: './log',
 stderr_dir: './err',
 sbatch_dir: './sbatch',
 mpi_binary: './runBfcChainMpi.o',
+qa_macro: './checkProduction.C',
 extensions: ['MuDst.root'],
 clean_scratch: True
 }
