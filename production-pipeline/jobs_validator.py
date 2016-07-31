@@ -79,6 +79,7 @@ def jobs_validator(config_file):
                     job['CpuEff'] = job_stats['CpuEff']
                     job['MaxRSS'] = job_stats['MaxRSS']
                     job['MaxVMSize'] = job_stats['MaxVMSize']
+                    job['Reserved'] = job_stats['Reserved']
                     files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
                     accum_stats['completed'] += 1
                 elif state == 'FAILED':

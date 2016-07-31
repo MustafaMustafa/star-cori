@@ -29,10 +29,10 @@ def get_job_stats(jobid):
 
     jobid = str(jobid)
     f_squeue = open('sjob.tmp', 'w')
-    subprocess.Popen(['sacct', '-o', 'JobID, STATE, ELAPSED, CPUTimeRaw, MaxRSS, MaxVMSize, AllocCPU', '--job', jobid], stdout=f_squeue).wait()
+    subprocess.Popen(['sacct', '-o', 'JobID, STATE, ELAPSED, CPUTimeRaw, MaxRSS, MaxVMSize, AllocCPU, Reserved', '--job', jobid], stdout=f_squeue).wait()
     f_squeue.close()
 
-    job_stats = {'state': 'NA', 'Elapsed': 0, 'CPUTime': 0, 'CpuEff': 0, 'MaxRSS': 0, 'MaxVMSize': 0}
+    job_stats = {'state': 'NA', 'Elapsed': 0, 'CPUTime': 0, 'CpuEff': 0, 'MaxRSS': 0, 'MaxVMSize': 0, 'Reserved': ''}
 
     with open('sjob.tmp', 'r') as f_squeue:
         # skip first two lines
@@ -47,7 +47,8 @@ def get_job_stats(jobid):
 
             job_stats['Elapsed'] = time_in_seconds(parts[2])
             job_stats['CPUTime'] = int(parts[3])
-            job_stats['CpuEff'] = job_stats['CPUTime']/(job_stats['Elapsed']*int(parts[-1]))
+            job_stats['CpuEff'] = job_stats['CPUTime']/(job_stats['Elapsed']*int(parts[-2]))
+            job_stats['Reserved'] = parts[-1]
 
             if len(lines) > 1:
                 for line in lines[1:]:
