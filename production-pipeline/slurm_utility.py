@@ -13,14 +13,13 @@ def get_queued_jobs(user):
     f_squeue.close()
 
     jobs = {}
-    f_squeue = open('squeue.tmp', 'r')
-    for line in f_squeue:
-        line = line.strip()
-        parts = [p for p in line.split()]
-        if parts[0] == 'JOBID':
-            continue
-        else:
+    with open('squeue.tmp', 'r') as f_squeue:
+        # skip the first line
+        for _ in xrange(1):
+            next(f_squeue)
+
+        for line in f_squeue:
+            parts = [p for p in line.strip().split()]
             jobs[int(parts[0].split('.')[0])] = parts[1]
 
-    f_squeue.close()
     return jobs
