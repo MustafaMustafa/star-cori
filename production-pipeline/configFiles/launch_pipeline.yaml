@@ -2,7 +2,7 @@
   production_tag: 'Pxxid',
   heartbeat: True,
   heartbeat_interval: 30,
-  config_files_dir: '/home/mustafa/research/star-cori/production-pipeline/configFiles',
+  config_files_dir: './configFiles',
   daemons_to_launch: ['daq_files_watcher', 'buffers_cleaner',
                       'jobs_validator', 'submitter', 'merger'],
   daemons_configs: {'daq_files_watcher' : 'daq_files_watcher.yaml',
