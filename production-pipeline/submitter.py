@@ -36,12 +36,10 @@ def submitter(config_file):
     database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()
 
     # spawn a stats heartbeat
-    accum_stats = {'ever_submitted': 0}
-    stats = {'to_submit': 0, 'submitted': 0, 'resubmitted':0}
-
     stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
                                      database[config['db_collection']],
-                                     accum_stats, stats)
+                                     accum_stats={'ever_submitted': 0},
+                                     stats={'to_submit': 0, 'submitted': 0, 'resubmitted':0})
     logging.info("Heartbeat daemon spawned")
 
     # main work - loop over production files collection and submit jobs
@@ -66,7 +64,7 @@ def submitter(config_file):
                 updated_daq['status'] = 'PENDING'
 
                 stats['submitted'] += 1
-                accum_stats['ever_submitted'] += 1
+                stats_heartbeat.accum_stats['ever_submitted'] += 1
 
                 if daq['failed']:
                     updated_daq['failed'] += 1
@@ -77,7 +75,6 @@ def submitter(config_file):
             else:
                 stats['to_submit'] += 1
 
-        stats_heartbeat.accum_stats = accum_stats
         stats_heartbeat.stats = stats
 
         time.sleep(config['submit_sleep_interval'])

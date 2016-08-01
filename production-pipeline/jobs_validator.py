@@ -35,12 +35,10 @@ def jobs_validator(config_file):
     database = MongoDbUtil('admin', db_server=config['db_server'], db_name=config['db_name']).database()
 
     # spawn a stats heartbeat
-    accum_stats = {'completed_job': 0, 'completed_muDst': 0, 'failed_job':0, 'failed_muDst': 0}
-    stats = {'total_in_queue': 0, 'running': 0, 'pending': 0, 'failed': 0, 'completing': 0, 'unknown': 0}
-
     stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
                                      database[config['db_collection']],
-                                     accum_stats, stats)
+                                     accum_stats={'completed_job': 0, 'completed_muDst': 0, 'failed_job':0, 'failed_muDst': 0},
+                                     stats={'total_in_queue': 0, 'running': 0, 'pending': 0, 'failed': 0, 'completing': 0, 'unknown': 0})
     logging.info("Heartbeat daemon spawned")
 
     # loop over queued jobs and update status
@@ -76,13 +74,13 @@ def jobs_validator(config_file):
                 state = job_stats['state']
                 if state == 'COMPLETED':
                     job['status'] = 'COMPLETED'
-                    accum_stats['completed_job'] += 1
+                    stats_heartbeat.accum_stats['completed_job'] += 1
 
                     if not pass_qa(job):
                         job['failed'] += 1
-                        accum_stats['failed_muDst'] += 1
+                        stats_heartbeat.accum_stats['failed_muDst'] += 1
                     else:
-                        accum_stats['completed_muDst'] += 1
+                        stats_heartbeat.accum_stats['completed_muDst'] += 1
 
                     job['Elapsed'] = job_stats['Elapsed']
                     job['CPUTime'] = job_stats['CPUTime']
@@ -92,14 +90,13 @@ def jobs_validator(config_file):
                     job['Reserved'] = job_stats['Reserved']
                     files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
                 elif state == 'FAILED':
-                    accum_stats['failed_job'] += 1
+                    stats_heartbeat.accum_stats['failed_job'] += 1
                     stats['failed'] += 1
                     job['failed'] += 1
                     files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
                 else:
                     stats['unknown'] += 1
 
-        stats_heartbeat.accum_stats = accum_stats
         stats_heartbeat.stats = stats
 
         time.sleep(config['recheck_sleep_interval'])
