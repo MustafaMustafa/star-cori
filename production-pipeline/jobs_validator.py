@@ -107,9 +107,14 @@ def jobs_validator(config_file):
 def pass_qa(job):
     """Returns status from checkProduction log"""
 
-    with open(os.path.join(os.path.dirname(job['log']), '%s.nEventsCheck.yaml'%job['basename']), 'r') as ftmp:
-        results = yaml.load(ftmp)
-        return results['Status'] == 'good'
+    qa_filename = os.path.join(os.path.dirname(job['log']), '%s.nEventsCheck.yaml'%job['basename'])
+
+    if os.path.exists(qa_filename):
+        with open(qa_filename, 'r') as ftmp:
+            results = yaml.load(ftmp)
+            return results['Status'] == 'good'
+    else:
+        return False
 
 if __name__ == '__main__':
     main()
