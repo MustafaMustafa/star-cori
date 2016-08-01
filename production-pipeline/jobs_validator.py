@@ -61,8 +61,8 @@ def jobs_validator(config_file):
                     stats['pending'] += 1
                 elif state == 'RUNNING':
                     stats['running'] += 1
-                    if state != job['state']:
-                        job['state'] = 'RUNNING'
+                    if state != job['status']:
+                        job['status'] = 'RUNNING'
                         files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
                 elif state == 'COMPLETING':
                     stats['completing'] += 1
@@ -75,7 +75,7 @@ def jobs_validator(config_file):
                 job_stats = slurm_utility.get_job_stats(job['slurm_id'])
                 state = job_stats['state']
                 if state == 'COMPLETED':
-                    job['state'] = 'COMPLETED'
+                    job['status'] = 'COMPLETED'
                     accum_stats['completed_job'] += 1
 
                     if not pass_qa(job):
