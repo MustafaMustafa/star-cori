@@ -1,9 +1,9 @@
-crawl_disk_every: 30
-daq_files_path: /home/mustafa/research/star-cori/workdir/fakeDaqs
+crawl_disk_every: 900
+daq_files_path: /scratch2/scratchdirs/mustafa/daq
 db_collection: daq_files_watcher
 db_name: STARProdState
 db_production_files_collection: production_files
 db_server: mongodb01.nersc.gov
 heartbeat: true
-heartbeat_interval: 30
-production_tag: Pxxid
+heartbeat_interval: 120
+production_tag: Px0id

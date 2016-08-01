@@ -6,23 +6,23 @@ db_name: STARProdState
 db_production_files_collection: production_files
 db_server: mongodb01.nersc.gov
 extensions:
-- 'MuDst.root'
+- MuDst.root
 heartbeat: true
-heartbeat_interval: 30
-max_jobs_in_queue: 100
+heartbeat_interval: 120
+max_jobs_in_queue: 10
 max_resubmissions: 7
 mpi_binary: ./runBfcChainMpi.o
-qa_macro: ./checkProduction.C
 production_chain: DbV20160418 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt
 production_dir: ./prod
-production_tag: Pxxid
+production_tag: Px0id
+qa_macro: ./checkProduction.C
 queue:
-  max_number_of_cores: 16
+  max_number_of_cores: 24
   max_running_time: 18000
   name: shared
 sbatch_dir: ./sbatch
 shifter_img: mmustafa/sl64_sl16d:v1_pdsf3
 stderr_dir: ./err
 stdout_dir: ./log
-submit: false
-submit_sleep_interval: 60
+submit: true
+submit_sleep_interval: 180
