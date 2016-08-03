@@ -39,7 +39,7 @@ def submitter(config_file):
     stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
                                      database[config['db_collection']],
                                      accum_stats={'ever_submitted': 0},
-                                     stats={'to_submit': 0, 'submitted': 0, 'resubmitted':0})
+                                     stats={'to_submit': 0, 'submitted': 0, 'resubmitted':0, 'failed_to_submit': 0})
     logging.info("Heartbeat daemon spawned")
 
     # main work - loop over production files collection and submit jobs
@@ -49,7 +49,7 @@ def submitter(config_file):
 
     while True:
 
-        stats = {'to_submit': 0, 'submitted': 0, 'resubmitted':0}
+        stats = {'to_submit': 0, 'submitted': 0, 'resubmitted':0, 'failed_to_submit': 0}
 
         empty_job_slots = config['max_jobs_in_queue'] - number_of_jobs_in_queue(jobs_coll)
 
@@ -60,18 +60,20 @@ def submitter(config_file):
 
             if empty_job_slots:
                 updated_daq = star_submit_engine.process_job(daq)
-                updated_daq['submitted'] += 1
-                updated_daq['status'] = 'PENDING'
+                if updated_daq['slurm_id'] > 0:
+                    updated_daq['submitted'] += 1
+                    updated_daq['status'] = 'PENDING'
 
-                stats['submitted'] += 1
-                stats_heartbeat.accum_stats['ever_submitted'] += 1
+                    stats['submitted'] += 1
+                    stats_heartbeat.accum_stats['ever_submitted'] += 1
 
-                if daq['failed']:
-                    updated_daq['failed'] += 1
-                    stats['resubmitted'] += 1
+                    if daq['failed']:
+                        stats['resubmitted'] += 1
 
-                files_coll.update_one({'_id':daq['_id']}, {'$set': updated_daq}, upsert=False)
-                empty_job_slots -= 1
+                    files_coll.update_one({'_id':daq['_id']}, {'$set': updated_daq}, upsert=False)
+                    empty_job_slots -= 1
+                else:
+                    stats['failed_to_submit'] += 1
             else:
                 stats['to_submit'] += 1
 
