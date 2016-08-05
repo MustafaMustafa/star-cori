@@ -3,19 +3,18 @@ $(function() {
   var locDateStr=new Date().toLocaleString();
   console.log( "JS: locDateStr=",locDateStr);
   $("#timeNowClient").html(locDateStr)
- 	
-	//{{ jan26|tojson|safe }}
+ 
+//==========  BUTTONS =========
+$('#accSetup').on('click', function() {
 
+   var starProdId=document.getElementById("inpProdId").value;
+   var ageSecH=document.getElementById("inpAgeSec").value;
+   var refTimeHour=document.getElementById("inpRefTime").value;
+    console.log( "JS: acc STAR prodId=", starProdId, "  ageSecH=",ageSecH," refTimeHour=",refTimeHour);  
+   $("#starProdId").html( starProdId)
+   $("#ageSecH").html( ageSecH)
+   $("#refTimeHour").html(refTimeHour)
 
-//----- button GET Data
-  $('#get88').on('click', function() {
-    var entry = this;
-    $("#kawa12").html(55) // modify content 
-    myState=2		
-    console.log("JS: get88 entry=",entry," myState=",myState);
-    var post_id = $(this).find('submit').attr('id');
-    console.log("JS: get88b id=",post_id);
-  });
-
+});
 
 });

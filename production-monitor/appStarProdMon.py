@@ -18,6 +18,9 @@ par_diffPeriodHour=1.1 # for computing averages or differentails
 appSPM = Flask(__name__)
 appSPM.config.from_object(__name__)
 queryCnt=4
+daemonL=['daq_files_watcher','submitter','jobs_validator','merger','buffers_clearner']
+varTypeL=['stats','accum_stats']
+
 
 @appSPM.route('/')
 def index():
@@ -25,84 +28,129 @@ def index():
     return render_template('index.html', user_id = user_id, timeStartDaemon=timeStarDaemon)
 
 
+#-----------
+@appSPM.route('/hi/<name>')
+def say_hi(name):
+    return 'Hello33, %s!' % (name)
+
+
+@appSPM.route('/getStar_Jan', methods=['GET', 'POST'])
+def getStar_Jan():
+    print 'py-getStar_Jan begin'
+    starProdId='Jan'
+    print 'Py M: selected STAR prod=',starProdId
+    return queryMongoDb_1D(starProdId )
+
+
+@appSPM.route('/getStar_Px0id', methods=['GET', 'POST'])
+def getStar_Px0id():
+    print 'py-getStar_Px0id begin'
+    starProdId='Px0id'
+    print 'Py M: selected STAR prod=',starProdId
+    return queryMongoDb_1D(starProdId )
+
+@appSPM.route('/getStar_Px1id', methods=['GET', 'POST'])
+def getStar_Px1id():
+    starProdId='Px1id'
+    print 'Py M: selected STAR prod=',starProdId
+    return queryMongoDb_1D(starProdId )
+
+
 #---------------------
 #------  uses  MongoDbUtilLean.py 
 #---------------------
-@appSPM.route('/m')
-def getM():
-    global queryCnt
+
+
+def queryMongoDb_1D(starProdId ):
+    global queryCnt, daemonL, varTypeL
     queryCnt+=1
-    
-    DB_COLL='daq_files_watcher_Jan'
-    TOTVARN='total_files_seen'
-    AVRVARN='total_files_on_disk'
-
-    dbData={}
-    dbData['subm']={}
-
-    # deal with single collection
-
-    print "monitoring from mongoDb coll=",DB_COLL
-    watchColl = MongoDbUtil('ro').database()[DB_COLL]
-    collCnt=watchColl.count()
-    [last]=watchColl.find().skip(collCnt-1)
-
-    print collCnt,last
-
-    # ......detect age of last record
     unixNow=datetime.datetime.utcnow();
-    unixLastRec=last['date']
-    #print 'xx=', unixLastRec
-    unixDiff=unixNow-unixLastRec
-    print 'last record age/sec', unixDiff,' now(utc)=',unixNow,' lastRec=',unixLastRec
+    dbOut={}
+    dbOut['info']={}
+    dbOut['info']['prodId']=starProdId
+    dbOut['daem']={}
 
-    #...... compute differential increment over set time inetrval
-    
-    gen_time = datetime.datetime.utcnow() - datetime.timedelta(hours=par_diffPeriodHour) 
-    dummy_id = ObjectId.from_datetime(gen_time)
-    result = list(watchColl.find({"_id": {"$gte": dummy_id}}))
+    myDb = MongoDbUtil('ro').database()
 
-    print 'seen records =', len(result),  'in last set period of ',datetime.timedelta(hours=par_diffPeriodHour),' hh:mm:ss'
+    for daem in daemonL:
+        collName=daem+'_'+starProdId
+        print '---------monSTAR daemon=',collName
+        myColl=myDb[collName]
+        collCnt=myColl.count()
+        dbOut['daem'][daem+'_cnt']=collCnt
+        print 'start=',myColl, ' count=',  collCnt
+        if collCnt<2:
+            continue
+        [last]=myColl.find().skip(collCnt-1)
+        #print 'last=',last
 
-    nr=len(result)
-    delT=999999
-    delSeenFile=0
-    if nr>0:
-        delT=result[nr-1]['date'] - result[0]['date']
-        delSeenFile=result[nr-1][TOTVARN] - result[0][TOTVARN]
-    print 'two records diff:  delT=',delT, ' delSeenFile=',delSeenFile
+        # ......detect age of last record
+        unixLastRec=last['date']
+        #print 'xx=', unixLastRec
+        unixDiff=unixNow-unixLastRec
+        #print 'last record age/sec', unixDiff,' now(utc)=',unixNow,' lastRec=',unixLastRec
 
+        dbOut['daem'][daem+'_last_date']=last['date']
+        for varT in varTypeL:
+            for x in last[varT]:
+                dbOut['daem'][daem+'_'+x]=last[varT][x]
 
-    if nr>1:    #.... average quantity for last period
-        sum1=0.
-        sum2=0.
-        for rec in result:
-            val=rec[AVRVARN]
-            sum1+=val
-            sum2+=val*val
-        
-        print 'compute avr, sum1=',sum1,' sum2=',sum2
-        avrVal=sum1/nr
-        sigVal=math.sqrt(sum2/nr - avrVal*avrVal)
-        print AVRVARN, ' avr=%.1f  +/- sig=%.1f'%(avrVal,sigVal)
-        
-    #... fill output dict
-    dbData['queryCnt']=queryCnt
-    dbData['watch']={}
-    dbData['watch']['coll']=DB_COLL
-    dbData['watch']['alarm']= unixDiff.total_seconds() >par_ageSecH
-    dbData['watch']['count']=collCnt
-    dbData['watch']['ageSec']=int(unixDiff.total_seconds())
-    dbData['watch']['seenFiles']=last[TOTVARN]
-    dbData['watch']['delSeenFiles']=delSeenFile
-    dbData['watch']['discFiles']=last[AVRVARN]
-    dbData['watch']['avrDiscFiles']='%.0f  +/- %.0f'%(avrVal,sigVal)
+    print 'Py MM end, nColl=',len(daemonL),'  dbOut=',dbOut
+    error='dupa2'
+    print 'py: dbOut',dbOut
+    return render_template('index.html', error88=error, dbInfo=dbOut['info'], dbDaem=dbOut['daem'])
 
 
-    error = ''
-    print 'dbData=',dbData
 
-    return render_template('starMonVer2.html', error=error, timeStartDaemon=timeStarDaemon , dbData=dbData, hearbeatTimeoutSec=par_ageSecH,  diffPeriodHour=par_diffPeriodHour)
+
+def queryMongoDb_tree(starProdId ):
+    global queryCnt, daemonL, varTypeL
+    queryCnt+=1
+    unixNow=datetime.datetime.utcnow();
+    dbOut={}
+    dbOut['info']={}
+    dbOut['info']['prodId']=starProdId
+
+    myDb = MongoDbUtil('ro').database()
+
+    for daem in daemonL:
+        collName=daem+'_'+starProdId
+        print '---------monSTAR daemon=',collName
+        dbOut[daem]={}
+        myColl=myDb[collName]
+        collCnt=myColl.count()
+        dbOut[daem]['cnt']=collCnt
+        print 'start=',myColl, ' count=',  collCnt
+        if collCnt<2:
+            continue
+        [last]=myColl.find().skip(collCnt-1)
+        #print 'last=',last
+
+        # ......detect age of last record
+        unixLastRec=last['date']
+        #print 'xx=', unixLastRec
+        unixDiff=unixNow-unixLastRec
+        #print 'last record age/sec', unixDiff,' now(utc)=',unixNow,' lastRec=',unixLastRec
+
+
+        lastD={}
+        lastD['date']=last['date']
+        lastD['ageSec']=int(unixDiff.total_seconds())
+        lastD['alarm']= unixDiff.total_seconds() >par_ageSecH
+        for varT in varTypeL:
+            lastD[varT]={}
+            for x in last[varT]:
+                 lastD[varT][x]=last[varT][x]
+
+        dbOut[daem]['last']=lastD
+
+
+    print 'Py MM end, nColl=',len(daemonL),'  dbOut=',dbOut
+    error='dupa2'
+    print 'py: dbOut',dbOut
+    return render_template('index.html', error88=error, dbOut=dbOut)
+
+
 
 
 
