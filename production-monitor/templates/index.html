@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>star-mon2</title>
+  <title>star-hpc-mon3</title>
   <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
  <script src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.3.0/prototype.js"></script>
-
+ <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
   <script type="text/javascript" src="{{url_for('static', filename='main.js') }}"></script>
+
+<!-- executes JS function below upon reload -->
+<script>  $(document).ready(function() {   pageLoadFunction();  });  </script>
 
 
 </head>
@@ -13,54 +16,75 @@
 
   <div class="container">
 
-    <h1>mngoDb-STAR  ver2  <br> </h1>
+    <h1>mngoDb-STAR  ver4  <br> </h1>
 
-Monitoring controlls :  
-STAR prod-ID: <input   id="inpProdId"/>, &nbsp;&nbsp;&nbsp; 
-hearbeat max (sec): <input   id="inpAgeSec" />, &nbsp;&nbsp;&nbsp;
- ref-time (hour): <input   id="inpRefTime" /> &nbsp;&nbsp;&nbsp;
-
- <button id="accSetup"> accept new </button> (all must be filled)<br>
- 
-<hr>
-Current setup : 
-STAR prod-ID=<text id="starProdId"> Jan</text> (sec),  &nbsp;&nbsp;&nbsp;
-ageSecH=<text id="ageSecH"> 70</text> (sec),  &nbsp;&nbsp;&nbsp;
- 
-refTime=<text id="refTimeHour"> 1.3</text> (hour)  
  &nbsp;&nbsp;&nbsp;
-client name ={{ user_id }}, <br>timeStartDaemon={{timeStartDaemon }} (local client time) <br>
-timeNowClient=<text id=timeNowClient > bXb </text> (local client time)
+    URL:  <a href="{{ url_for('index') }}"> goto home & reload </a>
+
+
+ &nbsp;&nbsp;&nbsp;
+client name ={{ user_id }}, <br>timeStartDaemon={{timeStartDaemon }} =(local client time) <br>
+timeNowClient=<text id=timeNowClient > bXb </text> =(local client time)
 
 <hr>
+
+
 Query MongoDb  for
 
 &nbsp;&nbsp;&nbsp;
-    URL:  <a href="{{ url_for('getStar_Jan') }}"> Jan-prod</a>
+STAR prod:  <a href="{{ url_for('getStar', name='Jan') }}">Jan-prod</a>
 &nbsp;&nbsp;&nbsp;
+<a href="{{ url_for('getStar', name='Px2id') }}">Px2id-prod</a>
 
-    URL:  <a href="{{ url_for('getStar_Px0id') }}"> Px0id-prod</a>
 &nbsp;&nbsp;&nbsp;
+<a href="{{ url_for('getStar', name='Px3id') }}">Px3id-prod</a>
 
-    URL:  <a href="{{ url_for('getStar_Px1id') }}"> Px1id-prod</a>
-&nbsp;&nbsp;&nbsp;
+<br>
 
+Plot collections: &nbsp; &nbsp; &nbsp; 
+   <a href="{{ url_for('plotter', name='daq_files_watcher') }}"> daq_files_watcher </a>   &nbsp; &nbsp; &nbsp; 
+  <a href="{{ url_for('plotter', name='submitter') }}"> submitter </a>   &nbsp; &nbsp; &nbsp; 
+  <a href="{{ url_for('plotter', name='jobs_validator') }}"> jobs_validator </a>   &nbsp; &nbsp; &nbsp; 
+
+  <a href="{{ url_for('plotter', name='x') }}"> x </a>   &nbsp; &nbsp; &nbsp; 
 
 <hr>
-DB output:
-<br>
-Table, info= {{dbInfo  }}=<br>
 
-   <hr>
-   dbData  formated :
+
+DB output:
+
+Table, info= {{dbInfo  }}=<br>
+<!-- Raw , deam2= {{dbDaem2  }}=<br>   Nice Table -->
+
 <table border=1>
-{% for key in  dbDaem  %}
-  <tr> <th>{{ key }} <td> {{ dbDaem[key] }}
+{% for daemD in  dbDaem2  %}
+
+ {% if daemD.alarm  %}
+  <tr BGCOLOR="#ff00ff">
+    <text style="color:red;">
+    {% else %}
+    <tr >  <text style="color:blue;">
+    {% endif %}
+
+
+
+<th>{{ daemD.name }} <th> rec cnt &nbsp;{{ daemD.cnt }} <th> age/sec &nbsp;{{daemD.ageS }} 
+   <tr> <th> 
+   {% for key in daemD.body %}
+      <td> {{ key}}  {{ daemD.body[key] }}
+     {% endfor %}
+
 {% endfor %}
 
-</table?
+</table>
 
+<hr>
+DEBUG/Junk
+<br>
+&nbsp;&nbsp;&nbsp;
 
+    Flask-URL:  <a href="{{ url_for('hi', name='XYZ') }}"> good Hi</a>
+&nbsp;&nbsp;&nbsp;
 
 </body>
 </html>
