@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>draw-one-v4</title>
+  <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.3.0/prototype.js"></script>
+
+  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<script src="https://code.highcharts.com/highcharts.js" type="text/javascript"></script>
+
+ <script type="text/javascript" src="{{url_for('static', filename='main.js') }}"></script>
+
+<!-- executes JS function below upon reload -->
+<script>  $(document).ready(function() {   pagePlotFunction();  });  </script>
+
+
+
+
+</head>
+<body>
+
+  <div class="container">
+
+    <h2>Plotter coll={{ collName}} prod= {{ prodId }},  v4  </h2>
+
+
+&nbsp;&nbsp;&nbsp;
+    URL:  <a href="{{ url_for('index') }}"> goto home & reload </a>
+
+<br>
+Query MongoDb 
+
+ &nbsp; &nbsp; <button id="askFHB"> pull DB data </button> 
+ &nbsp; &nbsp; &nbsp;  (takes 20-60 seconds - be patient )
+<br>
+
+
+
+
+<br>
+From JS mongoDB commu  state =<text id=mgDbComState> idle </text>
+<br>PLOT:
+   <div id="containerPLA" style="min-width: 300px; height: 400px; margin: 0 auto"></div>
+
+Change time zone for x-axis :
+
+ <button id="utcOff">UTC off</button> ,
+ <button id="utcOn">UTC on</button> 
+<hr>
+
+
+DEBUG <br>
+time-axis:
+
+    useUTC= <span id=useUtc> ??</span> <br>
+ 
+ <button id="getChartInfo">get chart info</button>
+<h2 style="color:red;">I am red</h2>
+
+portal query cnt=<text id=mgDbQueryCnt> -999 </text>, 
+
+ NumSer= <text id=mgDbNumSer> a7a </text>, 
+<hr>
+ {% if dbData %} <!-- This is shows up only if LAST RECORD  exist 2  -->
+heartbeat alarm= {{ dbData['watch']['alarm']}}=
+Last big user list  : <br>
+ {{ dbData['bigU'] }} 
+{% endif %}  <!-- end of  LAST RECORD  exist 2  -->
+
+</body>
+</html>

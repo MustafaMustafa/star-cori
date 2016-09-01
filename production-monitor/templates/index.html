@@ -1,31 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>html-jan-1</title>
+  <title>star-hpc-mon3</title>
   <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.3.0/prototype.js"></script>
+ <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='main.js') }}"></script>
+
+<!-- executes JS function below upon reload -->
+<script>  $(document).ready(function() {   pageLoadFunction();  });  </script>
+
+
 </head>
 <body>
 
   <div class="container">
 
-    <h1>mngoDb-STAR  ver1  <br>
-URLs:  /g=oneRead , /m=monitoring<br></h1>
-Flask link   to /m  : <a href="{{url_for('getM')}}"> monitor page  </a> , uses  MongoDbUtilLean.py <br>
- server (portal) started at time  {{ timeStartDaemon }} (PDT)
-<hr>
-Info: user={{ user_id }} 
- &nbsp; &nbsp; &nbsp; 
-<hr>
-Query MongoDb <input type="submit" id="get88" class="btn btn-default" value="Get Data 2" onclick="location.href={{url_for('getM')}}" >  &nbsp; &nbsp; &nbsp;  parallel execution: goes  to new URL, and  Java script target
-<hr>
-<br> in Jason value of kot33 =<span id=kot33> 65</span>
-<br> in Jason value of kot35 fixed =<span id=kot35> -222</span>
-<br> in Jason2 value of kawa12 ={{kawa12}}
+    <h1>mngoDb-STAR  ver4  <br> </h1>
+
+ &nbsp;&nbsp;&nbsp;
+    URL:  <a href="{{ url_for('index') }}"> goto home & reload </a>
 
 
-  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="{{url_for('static', filename='main.js') }}"></script>
+ &nbsp;&nbsp;&nbsp;
+client name ={{ user_id }}, <br>timeStartDaemon={{timeStartDaemon }} =(local client time) <br>
+timeNowClient=<text id=timeNowClient > bXb </text> =(local client time)
+
+<hr>
+
+
+Query MongoDb  for
+
+&nbsp;&nbsp;&nbsp;
+STAR prod:  <a href="{{ url_for('getStar', name='Jan') }}">Jan-prod</a>
+&nbsp;&nbsp;&nbsp;
+<a href="{{ url_for('getStar', name='Px2id') }}">Px2id-prod</a>
+
+&nbsp;&nbsp;&nbsp;
+<a href="{{ url_for('getStar', name='Px3id') }}">Px3id-prod</a>
+
+<br>
+
+Plot collections: &nbsp; &nbsp; &nbsp; 
+   <a href="{{ url_for('plotter', name='daq_files_watcher') }}"> daq_files_watcher </a>   &nbsp; &nbsp; &nbsp; 
+  <a href="{{ url_for('plotter', name='submitter') }}"> submitter </a>   &nbsp; &nbsp; &nbsp; 
+  <a href="{{ url_for('plotter', name='jobs_validator') }}"> jobs_validator </a>   &nbsp; &nbsp; &nbsp; 
+
+  <a href="{{ url_for('plotter', name='x') }}"> x </a>   &nbsp; &nbsp; &nbsp; 
+
+<hr>
+
+
+DB output:
+
+Table, info= {{dbInfo  }}=<br>
+<!-- Raw , deam2= {{dbDaem2  }}=<br>   Nice Table -->
+
+<table border=1>
+{% for daemD in  dbDaem2  %}
+
+ {% if daemD.alarm  %}
+  <tr BGCOLOR="#ff00ff">
+    <text style="color:red;">
+    {% else %}
+    <tr >  <text style="color:blue;">
+    {% endif %}
+
+
+
+<th>{{ daemD.name }} <th> rec cnt &nbsp;{{ daemD.cnt }} <th> age/sec &nbsp;{{daemD.ageS }} 
+   <tr> <th> 
+   {% for key in daemD.body %}
+      <td> {{ key}}  {{ daemD.body[key] }}
+     {% endfor %}
+
+{% endfor %}
+
+</table>
+
+<hr>
+DEBUG/Junk
+<br>
+&nbsp;&nbsp;&nbsp;
+
+    Flask-URL:  <a href="{{ url_for('hi', name='XYZ') }}"> good Hi</a>
+&nbsp;&nbsp;&nbsp;
 
 </body>
 </html>
