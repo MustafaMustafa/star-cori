@@ -66,7 +66,7 @@ class StarSubmitSlurmEngine(object):
         job_parameters['sbatch'] += '/%s.sbatch'%job_parameters['submission_idx']
 
         #pylint: disable-msg=too-many-format-args
-        command = 'shifter /usr/lib64/openmpi-1.10/bin/mpirun --tag-output'
+        command = '/usr/lib64/openmpi-1.10/bin/mpirun --tag-output'
         job_parameters['command'] = '%s -n %i runBfcChainMpi.o 1 %i \"%s\" \"%s\"'%(command, number_of_cores,
                                                                                     job_parameters['number_of_events'],
                                                                                     self.__production_chain,
@@ -115,26 +115,33 @@ class StarSubmitSlurmEngine(object):
         sbatch_file.write('#SBATCH --error=%s'%job_parameters['err']+'\n')
         sbatch_file.write('#SBATCH --time=%s'%job_parameters['estimated_running_time']+'\n')
         sbatch_file.write('\n')
-        sbatch_file.write('#Prepare environment and run job...\n')
-        sbatch_file.write('module load shifter\n')
+        sbatch_file.write('#Prepare environment...\n')
         sbatch_file.write('cd $SCRATCH\n')
         sbatch_file.write('mkdir %s\n'%job_scratch)
         sbatch_file.write('cd  %s\n'%job_scratch)
         sbatch_file.write('cp %s .'%self.__mpi_binary+'\n')
+        sbatch_file.write('\n')
+        sbatch_file.write('module load shifter\n')
+        sbatch_file.write('shifter /bin/csh <<EOF\n')
+        sbatch_file.write('source /usr/local/star/group/templates/cshrc\n')
+        sbatch_file.write('source /usr/local/star/group/templates/enable_scl\n')
+        sbatch_file.write('\n')
         sbatch_file.write('%s\n'%job_parameters['command'])
+        sbatch_file.write('\n')
 
         if 'MuDst.root' in self.__production_file_extensions:
             sbatch_file.write('\n#Merge MuDst files...\n')
             sbatch_file.write('ls *.MuDst.root > tmp.MuDst.list\n')
             sbatch_file.write('sort tmp.MuDst.list -o tmp.MuDst.list\n')
             sbatch_file.write('wait\n')
-            sbatch_file.write('shifter /bin/csh -c \"source /usr/local/star/group/templates/cshrc; hadd %s.MuDst.root @tmp.MuDst.list\"'%job_parameters['basename']+'\n')
+            sbatch_file.write('root4star -l -b -q -x lMuDst.C \'Hadd.C++(\"%s.MuDst.root\", \"@tmp.MuDst.list\")\''%job_parameters['basename']+'\n')
             sbatch_file.write('wait\n')
-            sbatch_file.write('\n#Check production...\n')
-            sbatch_file.write('cp %s .'%self.__qa_macro+'\n')
-            sbatch_file.write('shifter /bin/csh -c \"source /usr/local/star/group/templates/cshrc; root4star -l -b -q -x ')
-            sbatch_file.write('\'checkProduction.C(\\\"%s.MuDst.root\\\", %i)\'\"'%(job_parameters['basename'], job_parameters['number_of_events']))
+            sbatch_file.write('\n')
+            sbatch_file.write('#Check production...\n')
+            sbatch_file.write('root4star -l -b -q -x \'checkProduction.C(\"%s.MuDst.root\", %i)\''%(job_parameters['basename'], job_parameters['number_of_events']))
             sbatch_file.write('\nwait\n')
+            sbatch_file.write('\n')
+        sbatch_file.write('EOF\n')
         sbatch_file.write('\n')
 
         sbatch_file.write('#Copy back output files...\n')
