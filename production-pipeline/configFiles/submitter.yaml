@@ -1,4 +1,3 @@
-clean_scratch: true
 cputime_per_event: 200
 db_collection: submitter
 db_jobs_validator_collection: jobs_validator
@@ -20,7 +19,8 @@ queue:
   max_running_time: 10800
   name: shared
 sbatch_dir: ./sbatch
-shifter_img: mmustafa/sl64_sl16d:v1_pdsf5
+shifter_img: mmustafa/sl64_sl16d:v1_pdsf6
+stardb_payload: /global/cscratch1/sd/mustafa/mysql51VaultStar6/
 stderr_dir: ./err
 stdout_dir: ./log
 submit: true
