@@ -3,6 +3,6 @@ db_name: STARProdState
 db_production_files_collection: production_files
 db_server: mongodb01.nersc.gov
 heartbeat: true
-heartbeat_interval: 120
-production_tag: Px0id
+heartbeat_interval: 30
+production_tag: Px1id
 recheck_sleep_interval: 60

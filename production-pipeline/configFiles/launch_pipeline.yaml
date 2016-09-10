@@ -1,13 +1,11 @@
 {
-  production_tag: 'Px0id',
+  production_tag: 'Px3id',
   heartbeat: True,
-  heartbeat_interval: 120,
-  config_files_dir: '/global/homes/m/mustafa/STARProd/tests/Px0id/star-cori/production-pipeline/configFiles',
-  daemons_to_launch: ['jobs_validator', 'daq_files_watcher',
-                      'buffers_cleaner', 'submitter'],
+  heartbeat_interval: 180,
+  config_files_dir: './star-cori/production-pipeline/configFiles/',
+  daemons_to_launch: ['jobs_validator', 'daq_files_watcher', 'submitter'],
   daemons_configs: {'daq_files_watcher' : 'daq_files_watcher.yaml',
                     'submitter': 'submitter.yaml',
-                    'jobs_validator': 'jobs_validator.yaml',
-                    'buffers_cleaner': 'buffers_cleaner.yaml'},
-  interval_between_workers: 60
+                    'jobs_validator': 'jobs_validator.yaml'},
+  interval_between_workers: 40
 }

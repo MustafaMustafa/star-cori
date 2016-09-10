@@ -1,5 +1,5 @@
 clean_scratch: true
-cputime_per_event: 50
+cputime_per_event: 200
 db_collection: submitter
 db_jobs_validator_collection: jobs_validator
 db_name: STARProdState
@@ -8,21 +8,20 @@ db_server: mongodb01.nersc.gov
 extensions:
 - MuDst.root
 heartbeat: true
-heartbeat_interval: 120
+heartbeat_interval: 180
 max_jobs_in_queue: 10
-max_resubmissions: 7
+max_resubmissions: 1
 mpi_binary: ./runBfcChainMpi.o
 production_chain: DbV20160418 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt
 production_dir: ./prod
-production_tag: Px0id
-qa_macro: ./checkProduction.C
+production_tag: Px3id
 queue:
-  max_number_of_cores: 24
-  max_running_time: 18000
+  max_number_of_cores: 12
+  max_running_time: 10800
   name: shared
 sbatch_dir: ./sbatch
-shifter_img: mmustafa/sl64_sl16d:v1_pdsf3
+shifter_img: mmustafa/sl64_sl16d:v1_pdsf5
 stderr_dir: ./err
 stdout_dir: ./log
 submit: true
-submit_sleep_interval: 180
+submit_sleep_interval: 240
