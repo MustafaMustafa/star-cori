@@ -34,7 +34,6 @@ class StarSubmitSlurmEngine(object):
         self.__stderr_dir = os.path.abspath(parameters['stderr_dir'])
         self.__sbatch_dir = os.path.abspath(parameters['sbatch_dir'])
         self.__mpi_binary = os.path.abspath(parameters['mpi_binary'])
-        self.__qa_macro = os.path.abspath(parameters['qa_macro'])
         self.__production_file_extensions = parameters['extensions']
         self.__clean_scratch = parameters['clean_scratch']
         self.__submission_id = binascii.hexlify(os.urandom(16)).decode('utf-8')
