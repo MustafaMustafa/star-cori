@@ -58,7 +58,7 @@ def submitter(config_file):
             if daq['failed'] == config['max_resubmissions']:
                 continue
 
-            if empty_job_slots:
+            if empty_job_slots > 0:
                 updated_daq = star_submit_engine.process_job(daq)
                 if updated_daq['slurm_id'] > 0:
                     updated_daq['submitted'] += 1
