@@ -37,6 +37,12 @@ int main (int argc, char* argv[])
   MPI_Comm_rank (MPI_COMM_WORLD, &rank);        /* get current process id */
   MPI_Comm_size (MPI_COMM_WORLD, &nProcesses);  /* get number of processes */
 
+  // sleep to allow first rank to invoke the DB to cache
+  if(rank > 0)
+  {
+    sleep(60+5*rank);
+  }
+
   int eventsPerProcess = (int)((double)(lastEvent-firstEvent)/nProcesses + 0.5);
   int firstEventThisProcess = 1 + eventsPerProcess * rank;
   int lastEventThisProcess  = (rank + 1) * eventsPerProcess;
