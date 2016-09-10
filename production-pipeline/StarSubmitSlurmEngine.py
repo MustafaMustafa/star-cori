@@ -80,6 +80,8 @@ class StarSubmitSlurmEngine(object):
                 job_parameters['slurm_id'] = int(jobid[0])
             else:
                 job_parameters['slurm_id'] = -1
+        else:
+            job_parameters['slurm_id'] = -1
 
         return job_parameters
 
