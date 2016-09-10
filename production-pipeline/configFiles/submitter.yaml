@@ -8,14 +8,14 @@ extensions:
 - MuDst.root
 heartbeat: true
 heartbeat_interval: 180
-max_jobs_in_queue: 10
+max_jobs_in_queue: 100
 max_resubmissions: 1
 mpi_binary: ./runBfcChainMpi.o
 production_chain: DbV20160418 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt
 production_dir: ./prod
 production_tag: Px3id
 queue:
-  max_number_of_cores: 12
+  max_number_of_cores: 16
   max_running_time: 10800
   name: shared
 sbatch_dir: ./sbatch

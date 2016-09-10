@@ -1,5 +1,5 @@
 {
-  production_tag: 'Px3id',
+  production_tag: 'Px2id',
   heartbeat: True,
   heartbeat_interval: 180,
   config_files_dir: './star-cori/production-pipeline/configFiles/',
