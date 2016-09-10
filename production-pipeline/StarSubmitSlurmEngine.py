@@ -93,8 +93,8 @@ class StarSubmitSlurmEngine(object):
         number_of_cores = math.ceil(float(totaltime)/float(self.__queue['max_running_time']))
 
         if number_of_cores > self.__queue['max_number_of_cores']:
-            logging.error('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
-                         number_of_events, self.__queue['max_number_of_cores'])
+            logging.warning('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
+                            number_of_events, self.__queue['max_number_of_cores'])
             number_of_cores = self.__queue['max_number_of_cores']
 
         estimated_running_time = time.strftime('%H:%M:%S', time.gmtime(math.ceil(float(totaltime)/float(number_of_cores))))
