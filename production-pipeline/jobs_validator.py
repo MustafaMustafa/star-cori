@@ -93,6 +93,7 @@ def jobs_validator(config_file):
                     stats_heartbeat.accum_stats['failed_job'] += 1
                     stats['failed'] += 1
                     job['failed'] += 1
+                    job['status'] = 'FAILED'
                     files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
                 else:
                     stats['unknown'] += 1
