@@ -37,8 +37,8 @@ def jobs_validator(config_file):
     # spawn a stats heartbeat
     stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
                                      database[config['db_collection']],
-                                     accum_stats={'completed_job': 0, 'completed_muDst': 0, 'failed_job':0, 'failed_muDst': 0},
-                                     stats={'total_in_queue': 0, 'running': 0, 'pending': 0, 'failed': 0, 'completing': 0, 'unknown': 0})
+                                     accum_stats={'completed_job': 0, 'completed_muDst': 0, 'failed_job':0, 'failed_muDst': 0, 'timeout_job': 0},
+                                     stats={'total_in_queue': 0, 'running': 0, 'pending': 0, 'completing': 0, 'unknown': 0})
     logging.info("Heartbeat daemon spawned")
 
     # loop over queued jobs and update status
@@ -47,7 +47,7 @@ def jobs_validator(config_file):
     while True:
 
         slurm_jobs = slurm_utility.get_queued_jobs(config['slurm_user'])
-        stats = {'total_in_queue': len(slurm_jobs), 'running': 0, 'pending': 0, 'failed': 0, 'completing': 0, 'unknown': 0}
+        stats = {'total_in_queue': len(slurm_jobs), 'running': 0, 'pending': 0, 'completing': 0, 'unknown': 0}
 
         for job in files_coll.find({'$or': [{'status': 'PENDING'}, {'status': 'RUNNING'}]}):
 
@@ -91,9 +91,13 @@ def jobs_validator(config_file):
                     files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
                 elif state == 'FAILED':
                     stats_heartbeat.accum_stats['failed_job'] += 1
-                    stats['failed'] += 1
                     job['failed'] += 1
                     job['status'] = 'FAILED'
+                    files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
+                elif state == 'TIMEOUT':
+                    stats_heartbeat.accum_stats['timeout_job'] += 1
+                    job['failed'] += 1
+                    job['status'] = 'TIMEOUT'
                     files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
                 else:
                     stats['unknown'] += 1
