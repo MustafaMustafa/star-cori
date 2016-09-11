@@ -18,6 +18,7 @@ queue:
   max_number_of_cores: 16
   max_running_time: 10800
   name: shared
+  threads_per_core: 2
 sbatch_dir: ./sbatch
 shifter_img: mmustafa/sl64_sl16d:v1_pdsf6
 stardb_payload: /global/cscratch1/sd/mustafa/mysql51VaultStar6/
