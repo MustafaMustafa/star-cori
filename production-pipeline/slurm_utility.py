@@ -9,8 +9,12 @@ def get_queued_jobs(user):
     """Returns a dictionary of user slurm jobs"""
 
     f_squeue = open('squeue.tmp', 'w')
-    subprocess.Popen(['squeue', '-o', '%.18i %.15T', '--user', user], stdout=f_squeue).wait()
+    slurm = subprocess.Popen(['squeue', '-o', '%.18i %.15T', '--user', user], stdout=f_squeue)
+    slurm.wait()
     f_squeue.close()
+
+    if slurm.returncode != 0:
+        raise Error
 
     jobs = {}
     with open('squeue.tmp', 'r') as f_squeue:
@@ -29,8 +33,12 @@ def get_job_stats(jobid):
 
     jobid = str(jobid)
     f_squeue = open('sjob.tmp', 'w')
-    subprocess.Popen(['sacct', '-o', 'JobID, STATE, ELAPSED, CPUTimeRaw, MaxRSS, MaxVMSize, AllocCPU, Reserved', '--job', jobid], stdout=f_squeue).wait()
+    slurm_process = subprocess.Popen(['sacct', '-o', 'JobID, STATE, ELAPSED, CPUTimeRaw, MaxRSS, MaxVMSize, AllocCPU, Reserved', '--job', jobid], stdout=f_squeue)
+    slurm_process.wait()
     f_squeue.close()
+
+    if slurm_process.returncode != 0:
+        raise Error
 
     job_stats = {'state': 'NA', 'Elapsed': 0, 'CPUTime': 0, 'CpuEff': 0, 'MaxRSS': 0, 'MaxVMSize': 0, 'Reserved': ''}
 
@@ -38,26 +46,27 @@ def get_job_stats(jobid):
         # skip first two lines
         lines = f_squeue.readlines()[2:]
 
-        job_stats['state'] = lines[0].split()[1]
+        if len(lines) > 0:
+            job_stats['state'] = lines[0].split()[1]
 
-        if job_stats['state'] == 'COMPLETED':
+            if job_stats['state'] == 'COMPLETED':
 
-            # get info from first line
-            parts = [p for p in lines[0].strip().split()]
+                # get info from first line
+                parts = [p for p in lines[0].strip().split()]
 
-            job_stats['Elapsed'] = time_in_seconds(parts[2])
-            job_stats['CPUTime'] = int(parts[3])
-            job_stats['CpuEff'] = job_stats['CPUTime']/(job_stats['Elapsed']*int(parts[-2]))
-            job_stats['Reserved'] = parts[-1]
+                job_stats['Elapsed'] = time_in_seconds(parts[2])
+                job_stats['CPUTime'] = int(parts[3])
+                job_stats['CpuEff'] = job_stats['CPUTime']/(job_stats['Elapsed']*int(parts[-2]))
+                job_stats['Reserved'] = parts[-1]
 
-            if len(lines) > 1:
-                for line in lines[1:]:
-                    parts = [p for p in line.strip().split()]
-                    job_stats['MaxRSS'] = max(job_stats['MaxRSS'], parts[4])
-                    job_stats['MaxVMSize'] = max(job_stats['MaxVMSize'], parts[5])
-            else:
-                job_stats['MaxRSS'] = parts[4]
-                job_stats['MaxVMSize'] = parts[5]
+                if len(lines) > 1:
+                    for line in lines[1:]:
+                        parts = [p for p in line.strip().split()]
+                        job_stats['MaxRSS'] = max(job_stats['MaxRSS'], parts[4])
+                        job_stats['MaxVMSize'] = max(job_stats['MaxVMSize'], parts[5])
+                else:
+                    job_stats['MaxRSS'] = parts[4]
+                    job_stats['MaxVMSize'] = parts[5]
 
 
     return job_stats
@@ -73,3 +82,7 @@ def time_in_seconds(time):
     time = time.split(':')
 
     return days*3600*24 + int(time[0])*3600 + int(time[1])*60 + int(time[2])
+
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
