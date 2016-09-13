@@ -115,6 +115,7 @@ class StarSubmitSlurmEngine(object):
             logging.error('$SCRATCH is not defined. Cannot proceed!')
             exit(1)
 
+        memory_point = 0
         job_scratch = job_parameters['submission_idx']
         sbatch_file = open(job_parameters['sbatch'], 'w')
         sbatch_file.write('#!/bin/bash'+'\n')
@@ -126,6 +127,8 @@ class StarSubmitSlurmEngine(object):
         sbatch_file.write('#SBATCH --error=%s'%job_parameters['err']+'\n')
         sbatch_file.write('#SBATCH --time=%s'%job_parameters['estimated_running_time']+'\n')
         sbatch_file.write('\n')
+        sbatch_file.write('echo "Memory point %i"\nfree -g\n\n'%memory_point)
+        memory_point += 1
         sbatch_file.write('module load shifter\n')
         sbatch_file.write('shifter /bin/csh <<EOF\n')
         sbatch_file.write('source /usr/local/star/group/templates/cshrc\n')
@@ -139,6 +142,8 @@ class StarSubmitSlurmEngine(object):
         sbatch_file.write('setenv DB_SERVER_LOCAL_CONFIG "/mnt/%s/dbLoadBalancerLocalConfig_generic.xml"\n'%stardb_dir_name)
         sbatch_file.write('sleep 30\n')
         sbatch_file.write('\n')
+        sbatch_file.write('echo "Memory point %i"\nfree -g\n\n'%memory_point)
+        memory_point += 1
         sbatch_file.write('#Run job...\n')
         sbatch_file.write('cp %s .'%self.__mpi_binary+'\n')
         sbatch_file.write('%s\n'%job_parameters['command'])
@@ -162,6 +167,7 @@ class StarSubmitSlurmEngine(object):
             else:
                 sbatch_file.write('cp -p *.%s %s\n'%(ext, job_parameters['production_dir']))
 
-        sbatch_file.write('EOF')
+        sbatch_file.write('EOF\n')
+        sbatch_file.write('echo "Memory point %i"\nfree -g\n'%memory_point)
         sbatch_file.close()
 # pylint: enable=too-many-instance-attributes
