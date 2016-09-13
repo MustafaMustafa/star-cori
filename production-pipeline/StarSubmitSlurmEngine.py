@@ -120,7 +120,7 @@ class StarSubmitSlurmEngine(object):
         sbatch_file.write('#!/bin/bash'+'\n')
         sbatch_file.write('#SBATCH --image=%s'%self.__shifter_img+'\n')
         sbatch_file.write('#SBATCH --volume=%s/%s:/mnt:perNodeCache=size=100G\n'%(scratch_dir, job_parameters['submission_idx']))
-        sbatch_file.write('#SBATCH --ntasks=%i'%(job_parameters['number_of_cores']*self.__queue['threads_per_core'])+'\n')
+        sbatch_file.write('#SBATCH --ntasks=%i'%(job_parameters['number_of_cores']*self.__queue['threads_per_bfc'])+'\n')
         sbatch_file.write('#SBATCH --partition=%s'%job_parameters['queue']+'\n')
         sbatch_file.write('#SBATCH --output=%s'%job_parameters['log']+'\n')
         sbatch_file.write('#SBATCH --error=%s'%job_parameters['err']+'\n')
