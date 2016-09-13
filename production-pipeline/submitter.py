@@ -45,7 +45,7 @@ def submitter(config_file):
     # main work - loop over production files collection and submit jobs
     star_submit_engine = StarSubmitSlurmEngine(config)
     files_coll = database[config['db_production_files_collection']]
-    jobs_coll = database['db_jobs_validator_collection']
+    jobs_coll = database[config['db_jobs_validator_collection']]
 
     while True:
 
