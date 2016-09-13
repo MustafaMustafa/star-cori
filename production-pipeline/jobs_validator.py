@@ -38,7 +38,7 @@ def jobs_validator(config_file):
     stats_heartbeat = StatsHeartbeat(config['heartbeat_interval'],
                                      database[config['db_collection']],
                                      accum_stats={'completed_job': 0, 'completed_muDst': 0, 'failed_job':0, 'failed_muDst': 0, 'timeout_job': 0},
-                                     stats={'total_in_queue': 0, 'running': 0, 'pending': 0, 'completing': 0, 'unknown': 0})
+                                     stats={'total_in_queue': 0, 'running': 0, 'running_bfc': 0, 'pending': 0, 'completing': 0, 'unknown': 0})
     logging.info("Heartbeat daemon spawned")
 
     # loop over queued jobs and update status
@@ -48,7 +48,7 @@ def jobs_validator(config_file):
 
         try:
             slurm_jobs = slurm_utility.get_queued_jobs(config['slurm_user'])
-            stats = {'total_in_queue': len(slurm_jobs), 'running': 0, 'pending': 0, 'completing': 0, 'unknown': 0}
+            stats = {'total_in_queue': len(slurm_jobs), 'running': 0, 'running_bfc': 0, 'pending': 0, 'completing': 0, 'unknown': 0}
 
             for job in files_coll.find({'$or': [{'status': 'PENDING'}, {'status': 'RUNNING'}]}):
 
@@ -60,6 +60,7 @@ def jobs_validator(config_file):
                         stats['pending'] += 1
                     elif state == 'RUNNING':
                         stats['running'] += 1
+                        stats['running_bfc'] += job['number_of_cores']
                         if state != job['status']:
                             job['status'] = 'RUNNING'
                             files_coll.update_one({'_id':job['_id']}, {'$set': job}, upsert=False)
