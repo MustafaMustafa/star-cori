@@ -148,13 +148,10 @@ class StarSubmitSlurmEngine(object):
             sbatch_file.write('\n#Merge MuDst files...\n')
             sbatch_file.write('ls *.MuDst.root > tmp.MuDst.list\n')
             sbatch_file.write('sort tmp.MuDst.list -o tmp.MuDst.list\n')
-            sbatch_file.write('wait\n')
             sbatch_file.write('root4star -l -b -q -x lMuDst.C \'Hadd.C++(\"%s.MuDst.root\", \"@tmp.MuDst.list\")\''%job_parameters['basename']+'\n')
-            sbatch_file.write('wait\n')
             sbatch_file.write('\n')
             sbatch_file.write('#Check production...\n')
             sbatch_file.write('root4star -l -b -q -x \'checkProduction.C(\"%s.MuDst.root\", %i)\''%(job_parameters['basename'], job_parameters['number_of_events']))
-            sbatch_file.write('\nwait\n')
             sbatch_file.write('\n')
 
         sbatch_file.write('#Copy back output files...\n')
@@ -162,10 +159,8 @@ class StarSubmitSlurmEngine(object):
             if ext == 'MuDst.root':
                 sbatch_file.write('cp -p %s.nEventsCheck.yaml %s\n'%(job_parameters['basename'], os.path.dirname(job_parameters['log'])))
                 sbatch_file.write('cp -p %s.%s %s\n'%(job_parameters['basename'], ext, job_parameters['production_dir']))
-                sbatch_file.write('wait\n')
             else:
                 sbatch_file.write('cp -p *.%s %s\n'%(ext, job_parameters['production_dir']))
-                sbatch_file.write('wait\n')
 
         sbatch_file.write('EOF')
         sbatch_file.close()
