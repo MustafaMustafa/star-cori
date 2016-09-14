@@ -67,7 +67,7 @@ def submitter(config_file):
                     stats['submitted'] += 1
                     stats_heartbeat.accum_stats['ever_submitted'] += 1
 
-                    if daq['failed']:
+                    if daq['failed'] > 0:
                         stats['resubmitted'] += 1
 
                     files_coll.update_one({'_id':daq['_id']}, {'$set': updated_daq}, upsert=False)
