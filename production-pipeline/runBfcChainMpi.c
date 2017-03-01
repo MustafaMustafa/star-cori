@@ -85,6 +85,7 @@ int main (int argc, char* argv[])
   system(command);
 
   MPI_Finalize();
+  printf("MPI_Finalize called.\n");
   return 0;
 }
 
