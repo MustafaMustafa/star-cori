@@ -117,7 +117,7 @@ void getOutFileName(char* baseName, char* outFileName, int const rank, int const
   }
   else
   {
-    snprintf(outFileName, FileNameArraySize, "%s.%d.SubEvts_%d_%d.MuDst.root", baseName, rank, startEvt, endEvt);
+    snprintf(outFileName, FileNameArraySize, "%s.%03d.SubEvts_%d_%d.MuDst.root", baseName, rank, startEvt, endEvt);
   }
 }
 //-------------------------------
@@ -134,6 +134,6 @@ void getPicoOutFileName(char* baseName, char* outFileName, int const rank, int c
   }
   else
   {
-    snprintf(outFileName, FileNameArraySize, "%s.%d.SubEvts_%d_%d.picoDst.root", baseName, rank, startEvt, endEvt);
+    snprintf(outFileName, FileNameArraySize, "%s.%03d.SubEvts_%d_%d.picoDst.root", baseName, rank, startEvt, endEvt);
   }
 }
