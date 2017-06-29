@@ -1,4 +1,4 @@
-cputime_per_event: 200
+cputime_per_event: 50
 db_collection: submitter
 db_jobs_validator_collection: jobs_validator
 db_name: STARProdState
@@ -6,22 +6,24 @@ db_production_files_collection: production_files
 db_server: mongodb01.nersc.gov
 extensions:
 - MuDst.root
+- picoDst.root
 heartbeat: true
 heartbeat_interval: 180
 max_jobs_in_queue: 100
 max_resubmissions: 1
 mpi_binary: ./runBfcChainMpi.o
-production_chain: DbV20160418 P2014a pxlHit istHit btof mtd mtdCalib BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt
+production_chain: DbV20161216 P2016a StiCA mtd mtdCalib btof PxlHit IstHit SstHit beamline3D picoWrite PicoVtxVpd BEmcChkStat -evout CorrX OSpaceZ2 OGridLeak3D -hitfilt
 production_dir: ./prod
-production_tag: Px3id
+production_tag: P17idx
 queue:
-  max_number_of_cores: 16
+  max_number_of_cores: 32
   max_running_time: 10800
-  name: shared
+  name: regular
   threads_per_bfc: 2
+  use_max_cores: true
 sbatch_dir: ./sbatch
-shifter_img: mmustafa/sl64_sl16d:v1_pdsf6
-stardb_payload: /global/cscratch1/sd/mustafa/mysql51VaultStar6/
+shifter_img: mmustafa/sl64_sl17d:v1_cori
+stardb_payload: /global/cscratch1/sd/starreco/StarDb/vault20170505/
 stderr_dir: ./err
 stdout_dir: ./log
 submit: true

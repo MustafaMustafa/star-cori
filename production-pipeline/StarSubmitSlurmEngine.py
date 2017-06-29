@@ -96,11 +96,15 @@ class StarSubmitSlurmEngine(object):
            returns queue, number_of_processes for this job and estimated running time"""
 
         totaltime = self.__cputime_per_event * number_of_events
-        number_of_cores = math.ceil(float(totaltime)/float(self.__queue['max_running_time']))
 
-        if number_of_cores > self.__queue['max_number_of_cores']:
-            logging.warning('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
-                            number_of_events, self.__queue['max_number_of_cores'])
+        if not self.__queue['use_max_cores']:
+            number_of_cores = math.ceil(float(totaltime)/float(self.__queue['max_running_time']))
+
+            if number_of_cores > self.__queue['max_number_of_cores']:
+                logging.warning('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
+                                number_of_events, self.__queue['max_number_of_cores'])
+                number_of_cores = self.__queue['max_number_of_cores']
+        else:
             number_of_cores = self.__queue['max_number_of_cores']
 
         time_per_core = math.ceil(float(totaltime)/float(number_of_cores)) + 15*60
