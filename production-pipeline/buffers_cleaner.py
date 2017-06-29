@@ -54,12 +54,15 @@ def buffers_cleaner(config_file):
             tFile = tarfile.open('%s/%s.cori.tar'%(config['tar_dir'], job['basename']), 'w')
 
             for prod_file in job['production_files']:
-                tFile.addfile(tarfile.TarInfo(os.path.basename(prod_file)), prod_file)
+                # tFile.addfile(tarfile.TarInfo(os.path.basename(prod_file)), prod_file)
+                tFile.add(prod_file)
 
-            tFile.addfile(tarfile.TarInfo(os.path.basename(job['log'])), job['log'])
-            tFile.addfile(tarfile.TarInfo(os.path.basename(job['err'])), job['err'])
+            # tFile.addfile(tarfile.TarInfo(os.path.basename(job['log'])), job['log'])
+            tFile.add(job['log'])
+            tFile.add(job['err'])
             eventCheck_file = os.path.join(os.path.dirname(job['log']), '%s.nEventsCheck.yaml'%job['basename'])
-            tFile.addfile(tarfile.TarInfo(os.path.dirname(eventCheck_file)), eventCheck_file)
+            # tFile.addfile(tarfile.TarInfo(os.path.dirname(eventCheck_file)), eventCheck_file)
+            tFile.add(eventCheck_file)
 
             try:
                 tFile.close()
