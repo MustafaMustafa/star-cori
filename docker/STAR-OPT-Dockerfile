@@ -1,0 +1,9 @@
+FROM sl64_base:v1
+MAINTAINER Mustafa Mustafa <mmustafa@lbl.gov>
+
+# untar STAR OPT
+COPY optstar.sl64_gcc482.tar.gz /opt/star/
+COPY installstar /
+RUN python installstar SL16c && \ 
+     rm -f installstar && \
+     rm -f optstar.sl64_gcc482.tar.gz

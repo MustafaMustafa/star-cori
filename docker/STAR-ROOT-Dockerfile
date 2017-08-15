@@ -1,0 +1,9 @@
+FROM sl64_opt:v1
+MAINTAINER Mustafa Mustafa <mmustafa@lbl.gov>
+
+# untar ROOT
+COPY rootdeb-5.34.30.sl64_gcc482.tar.gz /usr/local/star/
+COPY installstar /
+RUN python installstar SL16c && \ 
+     rm -f installstar && \
+     rm -f rootdeb-5.34.30.sl64_gcc482.tar.gz

@@ -1,0 +1,21 @@
+FROM mmustafa/sl64_sl17d:v0
+MAINTAINER Mustafa Mustafa <mmustafa@lbl.gov>
+
+# DB load balancer
+COPY dbLoadBalancerLocalConfig_generic.xml /usr/local/star/packages/SL17d/StDb/servers/
+COPY enable_scl /usr/local/star/group/templates/
+
+# production pipeline utility macros
+COPY Hadd.C /usr/local/star/packages/SL17d/StRoot/macros/
+COPY lMuDst.C /usr/local/star/packages/SL17d/StRoot/macros/
+COPY checkProduction.C /usr/local/star//packages/SL17d/StRoot/macros/
+
+RUN yum -y install libibverbs.x86_64 environment-modules infinipath-psm-devel.x86_64 librdmacm.x86_64 opensm.x86_64 papi.x86_64 && \
+    wget http://mirror.centos.org/centos/6.8/os/x86_64/Packages/openmpi-1.10-1.10.2-2.el6.x86_64.rpm && \
+    rpm -i openmpi-1.10-1.10.2-2.el6.x86_64.rpm && \
+    rm  -f openmpi-1.10-1.10.2-2.el6.x86_64.rpm && \
+    yum -y install glibc-devel devtoolset-2-libstdc++-devel.i686 && \
+    yum -y install mysql-server mysql && \
+    mkdir /mysqlVault
+
+ENV LD_LIBRARY_PATH /usr/lib64/openmpi-1.10/lib/
