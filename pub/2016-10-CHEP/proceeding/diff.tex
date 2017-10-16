@@ -1,0 +1,409 @@
+\documentclass[a4paper]{jpconf}
+%DIF LATEXDIFF DIFFERENCE FILE
+
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+%DIF 4c4
+%DIF < \usepackage{ulem}
+%DIF -------
+ %DIF > 
+%DIF -------
+\hypersetup{
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=blue,        % color of links to bibliography
+    urlcolor=blue           % color of external links
+}
+ %DIF > 
+% \usepackage{lineno} %DIF > 
+% \linenumbers %DIF > 
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF HYPERREF PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}} %DIF PREAMBLE
+\newcommand{\DIFscaledelfig}{0.5}
+%DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
+\RequirePackage{settobox} %DIF PREAMBLE
+\RequirePackage{letltxmacro} %DIF PREAMBLE
+\newsavebox{\DIFdelgraphicsbox} %DIF PREAMBLE
+\newlength{\DIFdelgraphicswidth} %DIF PREAMBLE
+\newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
+% store original definition of \includegraphics %DIF PREAMBLE
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
+\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\scalebox{\DIFscaledelfig}{% %DIF PREAMBLE
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{% %DIF PREAMBLE
+\setlength{\unitlength}{\DIFdelgraphicswidth}% %DIF PREAMBLE
+\begin{picture}(1,1)% %DIF PREAMBLE
+\thicklines\linethickness{2pt} %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %DIF PREAMBLE
+\end{picture}% %DIF PREAMBLE
+}\hspace*{3pt}}} %DIF PREAMBLE
+} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddend}{\DIFaddend} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelend}{\DIFdelend} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+\title{STAR Data Reconstruction  at NERSC/Cori, an adaptable Docker container approach for HPC}
+
+\author{Mustafa Mustafa$^1$, Jan Balewski$^1$, \DIFaddbegin \DIFadd{Shane Canon$^1$, Lisa Gerhardt$^1$, }\DIFaddend J\'{e}r\^{o}me Lauret$^2$, \DIFaddbegin \DIFadd{Mark Lukascsyk$^2$, }\DIFaddend Jefferson Porter$^1$}
+\address{$^1$ Lawrence Berkeley National Laboratory, One Cyclotron Rd, Berkeley, CA 94720}
+\address{$^2$ Brookhaven National Laboratory, NY 11973}
+\DIFdelbegin %DIFDELCMD < \ead{mmustafa, balewski, rjporter @lbl.gov. jlauret@bnl.gov}
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \ead{mmustafa@lbl.gov}
+\DIFaddend 
+
+ \begin{abstract} 
+  \DIFdelbegin \DIFdel{Linux containers can enable the use of cloud-type and HPC
+  systems to
+   provide }\DIFdelend \DIFaddbegin \DIFadd{As HPC facilities grows their resources, adaptation of classic HEP/NP
+   workflows becomes a need. Linux containers may very well offer a way to lower
+   the bar to exploiting such resources and at the time, help collaboration to
+   reach }\DIFaddend vast elastic resources \DIFdelbegin \DIFdel{suitable for HEP/NP real-data and simulation productions.  This has the potential to address }\DIFdelend \DIFaddbegin \DIFadd{on such facilities and address their massive
+   }\DIFaddend current and future \DIFdelbegin \DIFdel{challenging data processing needs of experiments}\DIFdelend \DIFaddbegin \DIFadd{data processing challenges}\DIFaddend .  
+
+In this proceeding, we showcase STAR data reconstruction workflow at Cori HPC
+  system at NERSC. STAR software is packaged in a Docker image and runs at Cori
+  in Shifter containers.  We highlight two of the typical end-to-end
+  optimization challenges for such pipelines: 1) data transfer rate which was
+  carried over ESnet after optimizing end points and 2) scalable deployment of
+  conditions database in an HPC environment. Our tests demonstrate equally
+  efficient data processing workflows on Cori/HPC, comparable to standard Linux
+  clusters.
+\end{abstract}
+
+\section{Introduction} 
+The expected growth in \DIFdelbegin \DIFdel{HPC }\DIFdelend \DIFaddbegin \DIFadd{High Performance Computers (HPC) }\DIFaddend capacity over the next
+decade makes such resources attractive for meeting future computing needs of
+HEP/NP experiments \cite{ascrhep}, especially as their cost is becoming
+comparable to traditional clusters.  However, HPC facilities rely on features
+like specialized operating systems and hardware to enhance performance that
+make them difficult to be used without significant changes to data processing
+workflows. Containerized software environment running on HPC systems may very
+well be an ideal scalable solution to leverage those resources and a promising
+candidate to replace the outgrown traditional solutions employed at different
+computing centers.  
+
+In this proceeding we report on the first test of STAR real-data \DIFdelbegin \DIFdel{processing
+}\DIFdelend \DIFaddbegin \DIFadd{reconstruction
+}\DIFaddend utilizing Docker \cite{docker} containers at the Cori phase I supercomputer at
+NERSC\footnote{\url{http://www.nersc.gov/users/computational-systems/cori/}}. The
+target dataset was recorded by the STAR experiment at RHIC in 2016
+and is estimated to require $\sim$\DIFdelbegin \DIFdel{50M }\DIFdelend \DIFaddbegin \DIFadd{50 M }\DIFaddend core-hours for full processing. To ensure
+validity and reproducibility, STAR data processing is restricted to a vetted
+computing environment defined by system architecture, Linux OS, compiler and
+external libraries versions.  Furthermore, each data processing task requires
+certain STAR software release and database timestamp. In short, STAR data
+processing workflow represents a typical embarrassingly parallel HEP/NP
+computing task.  Thus, it is an ideal candidate to test the suitability of
+running containerized software, normalized to run on a shared HPC systems
+instead of its traditional dedicated off-the-shelf clusters. This direction, if
+successful, could very well address current and future experiments computing
+needs. We report on the different opportunities and challenges of running in
+such an environment.  We also present the modifications needed to the workflow
+in order to optimize Cori resource utilization and streamline the process in
+this and future productions as well as performance metrics.
+
+Section 2 outlines some of the technical aspects of our pipeline and discusses
+conditions database location in an HPC environment. In section 3,
+we show performance results from an extended test that uses +120k core-hours.
+Summary and outlook are provided in section 4. 
+
+\section{Implementation}
+\subsection{Docker/Shifter}
+HPC systems provide vast resources for computation and data intensive
+applications. However, for technical and logistic reasons, their software is
+not readily customizable for specific project needs. With a Docker enabled
+system, experiments can run their operating system of choice  and customized
+software stack in Linux containers.  The ability to "push" the software image
+with the job to the computing nodes makes any computing environment, e.g. HPC
+or Cloud, very versatile. Shifter \cite{shifter} is a NERSC project \DIFaddbegin \DIFadd{created }\DIFaddend to
+allow easy custom software stack deployment by bringing the functionality of
+Linux containers to Cray compute nodes along with the tool to convert Docker
+images into Shifter images for running on NERSC HPC systems.
+
+We base our STAR Docker image on Scientific Linux 6.4. ROOT \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\cite{root} }%DIFAUXCMD
+}\DIFaddend and STAR software
+are \DIFdelbegin \DIFdel{backed }\DIFdelend \DIFaddbegin \DIFadd{baked }\DIFaddend into the image from pre-compiled binaries. MySQL server and OpenMPI
+are the only components in the Docker image that are different from the STAR
+software environment used on traditional clusters. The MySQL server providing 
+conditions DB is launched locally on the compute node. MPI is used to fan-out 
+jobs to process sections of the same input data file by as many data
+reconstruction chains as available number of processors (or threads) on the
+node. This is complete data parallelism \DIFdelbegin \DIFdel{with no }\DIFdelend \DIFaddbegin \DIFadd{without any }\DIFaddend message passing between threads\DIFdelbegin \DIFdel{is
+done}\DIFdelend .
+
+\subsection{Pipeline}
+
+A schematic of the pipeline we built for reconstruction of STAR data at Cori is
+shown in Figure \ref{pipeline}. To carry a months long data processing campaign at
+an HPC facility requires high level of pipeline fault-tolerance. In addition,
+HPC systems are known for their more frequent maintenance downtimes, thus the
+pipeline needs to demonstrate cold-start capability. For these reasons and to
+facilitate end-to-end optimization we opted for a modular multi-threaded design
+(12 daemon threads) as opposed to a monolithic design. Our pipeline is designed
+\DIFdelbegin \DIFdel{with }\DIFdelend \DIFaddbegin \DIFadd{for a }\DIFaddend target throughput of \DIFdelbegin \DIFdel{10000 }\DIFdelend \DIFaddbegin \DIFadd{10,000 }\DIFaddend cpu-cores continuously running to process raw
+data in the order of \DIFdelbegin \DIFdel{100TB }\DIFdelend \DIFaddbegin \DIFadd{100 TB }\DIFaddend per week. The entire campaign is expected to use
+\DIFdelbegin \DIFdel{25M }\DIFdelend \DIFaddbegin \DIFadd{25 M }\DIFaddend core-hours.  The pipeline handles 1) \DIFdelbegin \DIFdel{migration }\DIFdelend \DIFaddbegin \DIFadd{transfer }\DIFaddend of raw data files (DAQs')
+from BNL to NERSC over ESnet and \DIFdelbegin \DIFdel{checked for integrity }\DIFdelend \DIFaddbegin \DIFadd{checking for integrity (md5sum) }\DIFaddend 2) submitting jobs to
+the queue, one file can be processed using 1 to 32 processors depending on
+queue partition availability and input file size. The output of the different
+processors are later merged into one file (MuDST) and 3) perform quality
+assurance on the output of the jobs and \DIFdelbegin \DIFdel{migrate }\DIFdelend \DIFaddbegin \DIFadd{transfer }\DIFaddend successfully produced data back
+to BNL. 
+
+\begin{figure}[h]
+\begin{center}
+\DIFdelbeginFL %DIFDELCMD < \includegraphics[width=0.8\textwidth]{STAR_at_Cori_Data_Flow_Diagram}
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \includegraphics[width=0.9\textwidth]{STAR_at_Cori_Data_Flow_Diagram}
+\DIFaddendFL \end{center}
+  \caption{\label{pipeline}A schematic of STAR data reconstruction pipeline at Cori, NERSC. 
+  The raw data input files (DAQs') are \DIFdelbeginFL \DIFdelFL{copied }\DIFdelendFL \DIFaddbeginFL \DIFaddFL{transferred }\DIFaddendFL from BNL to NERSC over ESnet. The reconstructed data (MuDSTs') 
+  are pulled back from BNL side.}
+\end{figure}
+
+Central to our design is the production database \DIFdelbegin \DIFdel{for which we used MongoDb. All
+}\DIFdelend \DIFaddbegin \DIFadd{to which all the }\DIFaddend states of the
+different stages of input file processing, daemons states (heartbeats) and
+summary statistics are logged\DIFdelbegin \DIFdel{in the production database}\DIFdelend . The daemons themselves are internally stateless
+and no communications between daemons happen except through the database, this
+provides 1) persistent storage of all pipeline states 2) daemon failure
+tolerance; daemons can be individually restarted and they pickup from where
+they left off 3) continuous collection and monitoring of pipeline states and
+statistics is easily done by querying the database. We rely on
+Slurm\footnote{Slurm is the workload manager used on Cori} \cite{slurm} to
+monitor jobs states and resource utilization on the compute node, i.e. no
+heartbeats directly from the job to the \DIFdelbegin \DIFdel{MongoDb}\DIFdelend \DIFaddbegin \DIFadd{production DB}\DIFaddend .
+
+In addition to the core tasks, \DIFdelbegin \DIFdel{Fig. }\DIFdelend \DIFaddbegin \DIFadd{Figure }\DIFaddend \ref{pipeline} also shows some auxiliary
+daemons, such as HPSS backup agent and the buffers cleaner. A Python Flask app
+running on portal-auth.ners.gov responds to web-base users queries to MongoDB
+and generates aggregate statistics plots showing progress of the production.
+This allows the operators of the production campaign to catch failures of the
+systems that are not automatically handled by the pipeline daemons.
+
+\subsection{Conditions database}
+STAR data processing software uses a MySQL service for detector online running
+conditions and calibration parameters. The location of this DB is critical for
+scaling the number of jobs to the planned throughput of the pipeline. Given
+\DIFdelbegin \DIFdel{the
+layout and infrastructure at Cori }\DIFdelend \DIFaddbegin \DIFadd{Cori layout and STAR framework capabilities }\DIFaddend we had a couple of options for this
+DB: \DIFdelbegin \DIFdel{I}\DIFdelend \DIFaddbegin \DIFadd{1}\DIFaddend ) a network isolated DB service, i.e. a DB server on a machine outside the
+Cori network \DIFdelbegin \DIFdel{II}\DIFdelend \DIFaddbegin \DIFadd{or 2}\DIFaddend ) full or minimal snapshot payload DB server local to the
+compute node.  Other options such as launching DB servers in separate jobs to
+serve a collection of compute nodes were entertained but deemed to pose
+unnecessary technical challenges. 
+
+\DIFdelbegin %DIFDELCMD < \begin{figure}[h]
+%DIFDELCMD <   \includegraphics[width=0.46\textwidth]{time_in_db_network}
+%DIFDELCMD <   \includegraphics[width=0.46\textwidth]{time_in_db} %%%
+%DIFDELCMD < \caption{%
+{%DIFAUXCMD
+%DIFDELCMD < \label{time_in_db}
+%DIFDELCMD <   %%%
+\DIFdelFL{Percentage of the walltime jobs spend in the DB (Left) example of a network
+  congestion incident in a network isolated DB setup. Jobs spent 45\% of their
+  time waiting for the DB (Right) database local to the compute node, walltime 
+  spent in DB < 2\% (note the log-scale)}}
+%DIFAUXCMD
+%DIFDELCMD < \end{figure}
+%DIFDELCMD < %%%
+\DIFdelend %DIF >  \begin{figure}[h]
+%DIF >    \includegraphics[width=0.46\textwidth]{time_in_db_network}
+%DIF >    \includegraphics[width=0.46\textwidth]{time_in_db} \caption{\label{time_in_db}
+%DIF >    Percentage of the walltime jobs spend in the DB (Left) example of a network
+%DIF >    congestion incident in a network isolated DB setup. Jobs spent 45\% of their
+%DIF >    time waiting for the DB (Right) database local to the compute node, walltime 
+%DIF >    spent in DB < 2\% (note the log-scale)}
+%DIF >  \end{figure}
+
+\DIFdelbegin \DIFdel{The percentage of walltime jobs spend in the DB using a network isolated DB
+server is shown in Figure \ref{time_in_db} left, and a DB server on the local
+compute node, right. }\DIFdelend %DIF >  The percentage of walltime jobs spend in the DB using a network isolated DB
+%DIF >  server is shown in Figure \ref{time_in_db} left, and a DB server on the local
+%DIF >  compute node, right. 
+We found that network isolated DB service suffers from unpredictable network
+conditions, in particular network \DIFdelbegin \DIFdel{throughout }\DIFdelend \DIFaddbegin \DIFadd{throughput }\DIFaddend relies on other users' traffic and
+other not \DIFdelbegin \DIFdel{easy foresee conditions. The left plot in
+Figure \ref{time_in_db} shows an instance of
+such a bad incident where jobs spent
+}\DIFdelend \DIFaddbegin \DIFadd{easily foreseen conditions. For example, during our stress tests of
+the pipeline a bad network conditions happened that made the jobs spend }\DIFaddend 45\% of
+\DIFdelbegin \DIFdel{the }\DIFdelend \DIFaddbegin \DIFadd{their walltime waiting for the DB. Jobs usually spend less than 2\% of their
+}\DIFaddend walltime in the DB. \DIFaddbegin \DIFadd{This incident lasted for more than 24hrs. At this point it
+was clear that we have to move the DB server closer to the jobs.
+}\DIFaddend 
+
+%DIF >  The left plot in
+%DIF >  Figure \ref{time_in_db} shows an instance of such a bad incident where jobs spent
+%DIF >  45\% of the walltime in the DB. 
+\DIFaddbegin 
+
+\DIFaddend Relying on DB servers local to each computing node comes at a cost.  In
+particular, as with many HPC systems, Cori nodes do not have local disks. The
+MySQL DB payload has to be placed on a globally mounted Lustre filesystem. 
+Lustre filesystem is not designed for the database transactional workloads that
+do a lot of metadata lookups. This is particularly problematic; the need to
+start a \DIFdelbegin \DIFdel{fresh MySQL server at the beginning }\DIFdelend \DIFaddbegin \DIFadd{MySQL server with a fresh cache at the begging }\DIFaddend of each job causes many
+\DIFdelbegin \DIFdel{disk-based
+queries against the }\DIFdelend \DIFaddbegin \DIFadd{queries to }\DIFaddend Lustre metadata to build up \DIFdelbegin \DIFdel{the }\DIFdelend in-memory\DIFdelbegin \DIFdel{cache}\DIFdelend . As a result, long delays were
+observed during the start of each job due to this inefficient use of the global
+filesystem. For example, a particular table requires $\sim$30k queries to
+build, building such a table takes more than 30 minutes with the payload on
+Lustre. 
+
+Shifter provided a solution to the problem of slow startup times due to
+building the DB cache on Lustre with its perNodeCache feature that allows
+creation of an XFS file, which acts as a local file system for the container.
+While the file is placed on Lustre, the metadata is kept in the compute node\DIFaddbegin \DIFadd{'s
+}\DIFaddend memory.  We opted for a solution where every job starts by copying the MySQL
+payload \DIFdelbegin \DIFdel{($\sim$30GB) }\DIFdelend into its own perNodeCache then launches the MySQL server.  \DIFdelbegin \DIFdel{Copying the payload }\DIFdelend \DIFaddbegin \DIFadd{To simplify
+the workflow we copy the entire STAR DB payload as opposed to a single
+year's snapshot, copying the 30 GB payload }\DIFaddend takes 1-2 minutes. This solution
+dramatically changed the DB performance. For example, caching the $\sim$30k
+queries table dropped from +30 minutes to a few seconds. We launch one DB
+server per compute node which serves all the reconstruction chains on that
+node, 1-32 chains on Cori Haswell nodes.  We found that overcommitting the node
+cores has not decreased the aggregated events throughput per core per walltime.
+So we run 1 MySQL server + N reconstruction chains on N cpu-cores. Local DB
+server strategy avoids the network routing bottlenecks altogether and trivially
+scales to our projected pipeline throughput.
+
+\subsection{NY-CA data transfer}
+
+\begin{figure}[h] 
+  \begin{center}
+    \includegraphics[width=0.46\textwidth]{network_opt} \caption{\label{network}
+    Test of transfer rate over ESnet after end-points transfer protocols
+    optimization, 5x improvement over the vanilla setup} 
+  \end{center} 
+\end{figure}
+
+For best utilization of CPU resources we need reliable data transfer between
+BNL and NERSC. Projected throughput requires the transfer of $\sim$\DIFdelbegin \DIFdel{100TB}\DIFdelend \DIFaddbegin \DIFadd{100 TB}\DIFaddend /week
+and $\sim$\DIFdelbegin \DIFdel{15TB}\DIFdelend \DIFaddbegin \DIFadd{15 TB}\DIFaddend /week of reconstructed data back to BNL.  or approximately a
+continuous transfer rate of \DIFdelbegin \DIFdel{200MB}\DIFdelend \DIFaddbegin \DIFadd{200 MB}\DIFaddend /s in steady state production. The data is
+transferred over \DIFdelbegin \DIFdel{ESnet, which after optimization of endpoint and transfer protocols provided sustained transfer rates
+of }\DIFdelend \DIFaddbegin \DIFadd{the Energy Sciences Network
+(ESnet)}\footnote{\url{https://www.es.net/}}\DIFadd{. The vanilla setup transfer rates
+were }\DIFaddend $\sim$\DIFdelbegin \DIFdel{600MB}\DIFdelend \DIFaddbegin \DIFadd{120 MB}\DIFaddend /\DIFdelbegin \DIFdel{s as shown in Figure
+\ref{network}. A 5x improvement over the vanilla setup transfer }\DIFdelend \DIFaddbegin \DIFadd{sec. By switching to 10 Gb NIC cards on the transfer nodes,
+dual path and optimizing for congestion control\mbox{%DIFAUXCMD
+\cite{esnet_opt} }%DIFAUXCMD
+we achieved a
+sustainable transfer }\DIFaddend rate of $\sim$\DIFdelbegin \DIFdel{120 }\DIFdelend \DIFaddbegin \DIFadd{600 }\DIFaddend MB/\DIFdelbegin \DIFdel{s. }\DIFdelend \DIFaddbegin \DIFadd{sec (Fig. \ref{network}). 
+}\DIFaddend 
+
+
+\section{Performance test} 
+
+\begin{figure}[h] \begin{center}
+  \DIFdelbeginFL %DIFDELCMD < \includegraphics[width=0.46\textwidth]{Px3id_production_mon}
+%DIFDELCMD <   %%%
+\DIFdelendFL \DIFaddbeginFL \includegraphics[width=0.7\textwidth]{Px3id_production_mon_2}
+  \DIFaddendFL \caption{\label{production_mon} An example of pipeline monitor plot showing
+  aggregate statistics of successful and completed jobs during a test
+  production.  "Completed job" is for jobs which ran to completion. "Completed
+  muDst" is for produced files which pass QA and +98\% of events produced}
+\end{center} \end{figure}
+
+We carried a real-data reconstruction test that used +120k core-hours to test
+the different pipeline units integration and calculate the overall success
+rate (SR). Our criteria for a successful output file is for the job to run to 
+completion and for the file to have +98\% of the data events
+reconstructed.  \DIFdelbegin \DIFdel{Fig. }\DIFdelend \DIFaddbegin \DIFadd{Figure }\DIFaddend \ref{production_mon} shows job success/failure aggregate
+statistics during our test production which was carried over 6 days. The tests
+had a SR $> 96\%$ for reconstructed files that passed our QA. Generally, we
+require an SR $> 95\%$ is enough to qualify the workflow and computing facility
+to be real-data processing quality. \DIFdelbegin \DIFdel{A solution has been identified for the
+}\DIFdelend \DIFaddbegin \DIFadd{The }\DIFaddend failed $\sim$4\% \DIFdelbegin \DIFdel{jobs which }\DIFdelend \DIFaddbegin \DIFadd{are mainly due to the
+failure of the local MySQL server. Solving this problem by making the server
+persistent }\DIFaddend will allow us to increase the SR to the +99\% range.
+
+\begin{figure}[h]
+  \includegraphics[width=0.46\textwidth]{eff}
+  \includegraphics[width=0.46\textwidth]{time_per_event}
+  \caption{\label{performance} (Left) CPU utilization efficiency
+  CPUTime/WallTime (Right) Distribution of walltime to process one event}
+\end{figure}
+
+Finally, we examined the CPU utilization efficiency of the jobs.
+Each one of our test jobs was granted 16 cpu-cores, and ran 16 reconstruction
+chains + 1 MySQL server (overcommitting the cores). The CPU utilization
+efficiency is well above 99\% for most jobs \DIFdelbegin \DIFdel{, }\DIFdelend \DIFaddbegin \DIFadd{as shown on the }\DIFaddend left plot in \DIFdelbegin \DIFdel{Fig.
+\ref{performance}. Fig. }\DIFdelend \DIFaddbegin \DIFadd{Figure
+\ref{performance}. Figure }\DIFaddend \ref{performance} right shows the distribution of
+walltime per event. The average time of 50s/Au+Au event is comparable to 48s
+without a local MySQL server. 
+
+\section{Summary \& Outlook}
+In this proceeding we outlined STAR strategy for carrying HEP/NP real-data
+reconstruction on Cori HPC facility. Docker/Shifter-enabled Cori and Edison at
+NERSC have vast resources that can be used to run customized HEP/NP software
+stacks. Edge services availability, such as conditions database, are a
+traditional challenge for running at HPC environments. We showed that, in the
+database case, running a database server at the compute node with the DB
+payload in a Shifter perNodeCache is a highly scalable solution without much
+overhead on the CPU resources. ESnet enables the transfer of large amounts of
+data across the continent; however, we found that both network protocols and
+endpoint optimizations are essential components of steady-state end-to-end
+transfer operations.  Finally, our test production shows +99\% walltime with
+very high success rate (+95\%), allowing us to deem the pipeline at Cori
+real-data proceeding quality. We plan to use the pipeline to process half of
+the 3Pb of Au+Au collision data recorded by the STAR experiment during RHIC run
+2016 which  will require $\sim$\DIFdelbegin \DIFdel{25M }\DIFdelend \DIFaddbegin \DIFadd{25 M }\DIFaddend core-hours. 
+
+\section*{References}
+\begin{thebibliography}{9}
+\bibitem{ascrhep} S. Habib et. al. "ASCR/HEP Exascale Requirements Review Report",  arXiv:1603.09303, 2016.
+\DIFaddbegin \bibitem{docker} \DIFadd{D. Merkel, "Docker: lightweight Linux containers for consistent development and deployment", Linux J., 2014(239), Mar. 2014.
+}\DIFaddend \bibitem{shifter} D. M. Jacobsen and R. S. Canon, “Contain This, Unleashing Docker for HPC”, Cray User Group 2015, April 23, 2015.
+\DIFdelbegin %DIFDELCMD < \bibitem{docker} %%%
+\DIFdel{D. Merkel}\DIFdelend \DIFaddbegin \bibitem{root} \DIFadd{Rene Brun and Fons Rademakers}\DIFaddend , "\DIFdelbegin \DIFdel{Docker: lightweight Linux containers for consistent development and deployment}\DIFdelend \DIFaddbegin \DIFadd{ROOT - An Object Oriented Data Analysis Framework}\DIFaddend ", \DIFdelbegin \DIFdel{Linux J. , 2014(239) , Mar. 2014.
+}\DIFdelend \DIFaddbegin \DIFadd{Nucl. Inst. \& Meth. in Phys. Res. A 389 (1997) 81-86. See also }\url{http://root.cern.ch/}\DIFadd{.
+}\DIFaddend \bibitem{slurm} M. A. Jette , A. B. Yoo and  M. Grondona, "SLURM: Simple Linux Utility for Resource Management", Vol. 2862 of Lecture Notes in Computer Science, Springer-Verlag, 2003.
+\DIFaddbegin \bibitem{esnet_opt} \DIFadd{"ESnet, Linux Tunning", }\url{http://fasterdata.es.net/host-tuning/linux/ tuning reference}
+\DIFaddend \end{thebibliography}
+\end{document}
