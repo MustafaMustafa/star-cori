@@ -12,7 +12,7 @@ pip freeze
 
 To launch service exec:
 
- ./appRdMongo101.fcgi 
+./appStarProdMon.fcgi 
 
   
  /star-hpc (for your production tool) port for  .fcgi script  8875

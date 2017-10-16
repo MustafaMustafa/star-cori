@@ -11,16 +11,14 @@ from MongoDbUtilLean import MongoDbUtil
 
 current_time = time.localtime()
 timeStarDaemon=time.strftime('%a, %d %b %Y %H:%M:%S ', current_time)
-par_ageSecH=70 # for alarming
+par_ageSecH=250 # for alarming
 par_diffPeriodHour=1.1 # for computing averages or differentails
-par_prodID='Px2id'
+par_prodID='P17id'
 par_limRecCnt=200
 par_plotCollName='jobs_validator'
 #par_plotCollName='daq_files_watcher'
 
 daemonL=['daq_files_watcher','submitter','jobs_validator','merger','buffers_clearner']
-
-#daemonL=['daq_files_watcher','merger']
 
 varTypeL=['stats','accum_stats']
 
@@ -88,13 +86,13 @@ def askMongoFH():
     print 'info=',dbInfo
 
     rec0=recA[0]
-    print 'rec0=',rec0
+    print 'P:rec0=',rec0
     for varT in varTypeL:
         for vName in rec0[varT]:
             #print 'add ser=',vName
             dbSers[vName]=[]
 
-    print 'BBB',dbSers
+    print 'P:found-init ',dbSers
 
     for rec in recA:
         date1=rec['date']
@@ -107,11 +105,10 @@ def askMongoFH():
                 dbSers[vName].append(point)
             #break    
 
-    print 'sersL=',len(dbSers)
+    print 'P:sersL=',len(dbSers)
+    #print(dbSers)
     obj=dict(dbInfo=dbInfo, dbSers=dbSers)
     return jsonify( obj)
-
-
 
 
 

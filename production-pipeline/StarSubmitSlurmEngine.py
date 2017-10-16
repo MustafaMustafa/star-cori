@@ -63,6 +63,11 @@ class StarSubmitSlurmEngine(object):
         job_parameters['err'] += '/%s.err'%job_parameters['submission_idx']
         job_parameters['sbatch'] += '/%s.sbatch'%job_parameters['submission_idx']
 
+        job_parameters['production_files'] = []
+        for ext in self.__production_file_extensions:
+            job_parameters['production_files'].append('%s/%s.%s'%(job_parameters['production_dir'], job_parameters['basename'], ext))
+
+
         #pylint: disable-msg=too-many-format-args
         command = '/usr/lib64/openmpi-1.10/bin/mpirun --tag-output'
         job_parameters['command'] = '%s -n %i runBfcChainMpi.o 1 %i \"%s\" \"/mnt/%s.daq\"'%(command, number_of_cores,
@@ -91,11 +96,15 @@ class StarSubmitSlurmEngine(object):
            returns queue, number_of_processes for this job and estimated running time"""
 
         totaltime = self.__cputime_per_event * number_of_events
-        number_of_cores = math.ceil(float(totaltime)/float(self.__queue['max_running_time']))
 
-        if number_of_cores > self.__queue['max_number_of_cores']:
-            logging.warning('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
-                            number_of_events, self.__queue['max_number_of_cores'])
+        if not self.__queue['use_max_cores']:
+            number_of_cores = math.ceil(float(totaltime)/float(self.__queue['max_running_time']))
+
+            if number_of_cores > self.__queue['max_number_of_cores']:
+                logging.warning('%i events is too high to run on a single node. Limiting to max number of cores/node = %i',
+                                number_of_events, self.__queue['max_number_of_cores'])
+                number_of_cores = self.__queue['max_number_of_cores']
+        else:
             number_of_cores = self.__queue['max_number_of_cores']
 
         time_per_core = math.ceil(float(totaltime)/float(number_of_cores)) + 15*60
@@ -120,16 +129,16 @@ class StarSubmitSlurmEngine(object):
         sbatch_file = open(job_parameters['sbatch'], 'w')
         sbatch_file.write('#!/bin/bash'+'\n')
         sbatch_file.write('#SBATCH --image=%s'%self.__shifter_img+'\n')
-        sbatch_file.write('#SBATCH --volume=%s/%s:/mnt:perNodeCache=size=100G\n'%(scratch_dir, job_parameters['submission_idx']))
+        sbatch_file.write('#SBATCH --volume=%s/%s:/mnt:perNodeCache=size=50G\n'%(scratch_dir, job_parameters['submission_idx']))
         sbatch_file.write('#SBATCH --ntasks=%i'%(job_parameters['number_of_cores']*self.__queue['threads_per_bfc'])+'\n')
         sbatch_file.write('#SBATCH --partition=%s'%job_parameters['queue']+'\n')
+        sbatch_file.write('#SBATCH -C haswell\n')
         sbatch_file.write('#SBATCH --output=%s'%job_parameters['log']+'\n')
         sbatch_file.write('#SBATCH --error=%s'%job_parameters['err']+'\n')
         sbatch_file.write('#SBATCH --time=%s'%job_parameters['estimated_running_time']+'\n')
         sbatch_file.write('\n')
         sbatch_file.write('echo "Memory point %i"\nfree -g\n\n'%memory_point)
         memory_point += 1
-        sbatch_file.write('module load shifter\n')
         sbatch_file.write('shifter /bin/csh <<EOF\n')
         sbatch_file.write('source /usr/local/star/group/templates/cshrc\n')
         sbatch_file.write('source /usr/local/star/group/templates/enable_scl\n')
@@ -160,14 +169,20 @@ class StarSubmitSlurmEngine(object):
             sbatch_file.write('root4star -l -b -q -x \'checkProduction.C(\"%s.MuDst.root\", %i)\''%(job_parameters['basename'], job_parameters['number_of_events']))
             sbatch_file.write('\n')
 
+        if 'picoDst.root' in self.__production_file_extensions:
+            sbatch_file.write('\n#Merge picoDst files...\n')
+            sbatch_file.write('ls *.picoDst.root > tmp.picoDst.list\n')
+            sbatch_file.write('sort tmp.picoDst.list -o tmp.picoDst.list\n')
+            sbatch_file.write('root4star -l -b -q -x lMuDst.C \'Hadd.C++(\"%s.picoDst.root\", \"@tmp.picoDst.list\")\''%job_parameters['basename']+'\n')
+            sbatch_file.write('\n')
+
         sbatch_file.write('#Copy back output files...\n')
         for ext in self.__production_file_extensions:
             if ext == 'MuDst.root':
                 sbatch_file.write('cp -p %s.nEventsCheck.yaml %s\n'%(job_parameters['basename'], os.path.dirname(job_parameters['log'])))
-                sbatch_file.write('cp -p %s.%s %s\n'%(job_parameters['basename'], ext, job_parameters['production_dir']))
-            else:
-                sbatch_file.write('cp -p *.%s %s\n'%(ext, job_parameters['production_dir']))
+            sbatch_file.write('cp -p %s.%s %s\n'%(job_parameters['basename'], ext, job_parameters['production_dir']))
 
+        sbatch_file.write('\nkillall mysqld\n')
         sbatch_file.write('EOF\n')
         sbatch_file.write('echo "Memory point %i"\nfree -g\n'%memory_point)
         sbatch_file.close()

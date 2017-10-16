@@ -57,7 +57,7 @@ def crawl_disk(files_coll, daqs_path, accum_stats, stats):
     for dirname, _, filenames in os.walk(daqs_path):
 
         for filename in filenames:
-            if filename.find('.daq') < 0:
+            if filename[-3:] != 'daq':
                 continue
             else:
                 basename = filename[0:filename.find('.daq')]
@@ -67,12 +67,13 @@ def crawl_disk(files_coll, daqs_path, accum_stats, stats):
             if not db_search.count():
                 number_new_files += 1
 
-                with open(os.path.join(dirname, '%s.mrk'%basename), 'r') as f_mrk:
+                with open(os.path.join(dirname, '%s.daq.mrk'%basename), 'r') as f_mrk:
                     tmp = f_mrk.readlines()
                     if len(tmp) > 1:
                         __logger.error('Markup file %s.mrk has more than one line skipping ...', filename)
                     else:
-                        number_of_events = int(tmp[0].rstrip())
+                        tmp = tmp[0].strip()
+                        number_of_events = int(tmp.split()[1])
 
 
                 path = os.path.join(dirname, filename)

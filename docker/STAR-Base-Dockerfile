@@ -1,0 +1,11 @@
+FROM ringo/scientific:6.4
+MAINTAINER Mustafa Mustafa <mmustafa@lbl.gov>
+
+#STAR RPMs
+RUN yum -y install libxml2 tcsh libXpm.i686 libc.i686 libXext.i686 libXrender.i686 libstdc++.i686 fontconfig.i686 zlib.i686 libgfortran.i686 libSM.i686 mysql-libs.i686 gcc-c++ gcc-gfortran glibc-devel.i686 xorg-x11-xauth wget make libxml2.so.2 gdb libXtst.{i686,x86_64} libXt.{i686,x86_64} glibc glibc-devel gcc-c++
+RUN wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo && \
+    yum -y install devtoolset-2-toolchain
+
+COPY installstar /
+RUN python installstar SL16c && \ 
+     rm -f installstar

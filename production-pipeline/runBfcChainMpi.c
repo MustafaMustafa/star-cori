@@ -8,6 +8,8 @@
 void getBaseFileName(char* fileName, char* baseName);
 void getMuDstFileName(char* baseName, char* outFileName);
 void getOutFileName(char* baseName, char* outFileName, int rank, int starEvt, int endEvt);
+void getPicoFileName(char* baseName, char* outFileName);
+void getPicoOutFileName(char* baseName, char* outFileName, int const rank, int const startEvt, int const endEvt);
 
 #define FileNameArraySize 200
 
@@ -84,6 +86,12 @@ int main (int argc, char* argv[])
   snprintf(command, sizeof(command), "mv %s ../%s", muDstFileName, outFileName);
   system(command);
 
+  char picoFileName[FileNameArraySize];
+  getPicoFileName(baseName, picoFileName);
+  getPicoOutFileName(baseName, outFileName, rank, firstEventThisProcess, lastEventThisProcess);
+  snprintf(command, sizeof(command), "mv %s ../%s", picoFileName, outFileName);
+  system(command);
+
   MPI_Finalize();
   printf("MPI_Finalize called.\n");
   return 0;
@@ -109,6 +117,23 @@ void getOutFileName(char* baseName, char* outFileName, int const rank, int const
   }
   else
   {
-    snprintf(outFileName, FileNameArraySize, "%s.%d.SubEvts_%d_%d.MuDst.root", baseName, rank, startEvt, endEvt);
+    snprintf(outFileName, FileNameArraySize, "%s.%03d.SubEvts_%d_%d.MuDst.root", baseName, rank, startEvt, endEvt);
+  }
+}
+//-------------------------------
+void getPicoFileName(char* baseName, char* outFileName)
+{
+  getPicoOutFileName(baseName, outFileName, -1, -1, -1);
+}
+
+void getPicoOutFileName(char* baseName, char* outFileName, int const rank, int const startEvt, int const endEvt)
+{
+  if(startEvt == -1)
+  {
+    snprintf(outFileName, FileNameArraySize, "%s.picoDst.root", baseName);
+  }
+  else
+  {
+    snprintf(outFileName, FileNameArraySize, "%s.%03d.SubEvts_%d_%d.picoDst.root", baseName, rank, startEvt, endEvt);
   }
 }

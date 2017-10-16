@@ -1,0 +1,10 @@
+FROM sl64_root:v1
+MAINTAINER Mustafa Mustafa <mmustafa@lbl.gov>
+
+# untar STAR library
+RUN mkdir /usr/local/star/packages/
+COPY SL17d.tar.gz /usr/local/star/packages/
+COPY installstar /
+RUN python installstar SL17d && \ 
+     rm -f installstar && \
+     rm -f /usr/local/star/packages/SL17d.tar.gz

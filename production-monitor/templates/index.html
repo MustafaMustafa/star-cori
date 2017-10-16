@@ -33,11 +33,13 @@ Query MongoDb  for
 
 &nbsp;&nbsp;&nbsp;
 STAR prod:  <a href="{{ url_for('getStar', name='Jan') }}">Jan-prod</a>
-&nbsp;&nbsp;&nbsp;
-<a href="{{ url_for('getStar', name='Px2id') }}">Px2id-prod</a>
 
 &nbsp;&nbsp;&nbsp;
-<a href="{{ url_for('getStar', name='Px3id') }}">Px3id-prod</a>
+<a href="{{ url_for('getStar', name='P17id') }}">P17id-prod</a>
+&nbsp;&nbsp;&nbsp;
+<a href="{{ url_for('getStar', name='P17idx') }}">P17idx-prod</a>
+&nbsp;&nbsp;&nbsp;
+<a href="{{ url_for('getStar', name='P3idx') }}">P3idx-prod</a>
 
 <br>
 
@@ -46,6 +48,7 @@ Plot collections: &nbsp; &nbsp; &nbsp;
   <a href="{{ url_for('plotter', name='submitter') }}"> submitter </a>   &nbsp; &nbsp; &nbsp; 
   <a href="{{ url_for('plotter', name='jobs_validator') }}"> jobs_validator </a>   &nbsp; &nbsp; &nbsp; 
 
+  <a href="{{ url_for('plotter', name='buffers_cleaner') }}"> buffers_cleaner </a>   &nbsp; &nbsp; &nbsp; 
   <a href="{{ url_for('plotter', name='x') }}"> x </a>   &nbsp; &nbsp; &nbsp; 
 
 <hr>
